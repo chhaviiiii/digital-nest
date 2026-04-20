@@ -85,10 +85,15 @@ export const DEFAULT_TASKS = [
 ];
 
 // pos is { x, y } as % of room container (top-left anchor)
+// color is optional per-item tint (bed duvet, rug, nightstand wood)
 export const DEFAULT_SHOP = [
-  { id: 'plant',  label: 'Monstera',     icon: '🌿', cost: 30,  owned: true,  placed: true,  pos: { x: 2,  y: 53 } },
-  { id: 'lamp',   label: 'Floor Lamp',   icon: '🏮', cost: 40,  owned: true,  placed: true,  pos: { x: 80, y: 47 } },
-  { id: 'rug',    label: 'Woven Rug',    icon: '🪹', cost: 20,  owned: true,  placed: true,  pos: { x: 28, y: 63 } },
+  // ── Always-owned room staples (free, hidden by default) ──
+  { id: 'bed',        label: 'Bed',          icon: '🛏', cost: 0,  owned: true,  placed: false, pos: { x: 58, y: 34 }, color: null },
+  { id: 'nightstand', label: 'Nightstand',   icon: '🪵', cost: 0,  owned: true,  placed: false, pos: { x: 53, y: 36 }, color: null },
+  { id: 'rug',        label: 'Woven Rug',    icon: '🪹', cost: 0,  owned: true,  placed: false, pos: { x: 28, y: 63 }, color: null },
+  // ── Earnable decor ──
+  { id: 'plant',  label: 'Monstera',     icon: '🌿', cost: 30,  owned: false, placed: false, pos: { x: 2,  y: 53 } },
+  { id: 'lamp',   label: 'Floor Lamp',   icon: '🏮', cost: 40,  owned: false, placed: false, pos: { x: 80, y: 47 } },
   { id: 'cat',    label: 'Little Cat',   icon: '🐱', cost: 80,  owned: false, placed: false, pos: { x: 37, y: 65 } },
   { id: 'candles',label: 'Candles',      icon: '🕯',  cost: 15,  owned: false, placed: false, pos: { x: 3,  y: 64 } },
   { id: 'books',  label: 'Book Stack',   icon: '📚', cost: 20,  owned: false, placed: false, pos: { x: 16, y: 64 } },
@@ -109,7 +114,7 @@ export const DEFAULT_ROOM = {
   floorColor:     'oklch(65% 0.08 54)',
   accentColor:    'oklch(58% 0.11 42)',
   mood:           'golden',
-  coins:          240,
+  coins:          0,
   catColorIdx:    0,
   tasks:          DEFAULT_TASKS,
   shopItems:      DEFAULT_SHOP,
@@ -126,9 +131,4 @@ export const DEFAULT_ROOM = {
   lastActive:     null,
   completedTasks: [],
   nextDate:       null,
-  bedPos:         { x: 58, y: 34 },
-  nightstandPos:  { x: 53, y: 36 },
-  bedColor:       null,
-  rugColor:       null,
-  nightstandColor:null,
 };

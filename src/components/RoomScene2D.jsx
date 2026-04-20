@@ -437,11 +437,8 @@ export function RoomScene2D({
   avatarA, avatarB, shopItems = [], coins = 0, catColorIdx = 0, noteText,
   sleepA = false, sleepB = false, ping = null,
   streak = 0, nextDate = null, roomName = '',
-  bedPos, nightstandPos,
-  bedColor, rugColor, nightstandColor,
   onMoodChange, onAvatarTap, onNoteClick,
-  onCatColorChange, onItemMove, onBlobMove, onBedMove, onNightstandMove,
-  onFurnitureColor, onToggleSleep,
+  onCatColorChange, onItemMove, onItemColor, onBlobMove, onToggleSleep,
   onPing, onRoomNameChange,
 }) {
   const wc = wallColor  || 'oklch(93% 0.022 55)';
@@ -550,15 +547,19 @@ export function RoomScene2D({
         </div>
       )}
 
-      {/* ── Nightstand — draggable ── */}
-      <DraggableDecor itemId="nightstand" pos={nightstandPos ?? { x: 53, y: 36 }} onMove={(_, pos) => onNightstandMove?.(pos)} onTap={() => setFurniturePicker('nightstand')} roomRef={roomRef} zBase={3}>
-        <NightstandSVG color={nightstandColor} />
-      </DraggableDecor>
+      {/* ── Nightstand — draggable, toggled via shop ── */}
+      {placed('nightstand') && (
+        <DraggableDecor itemId="nightstand" pos={itemPos('nightstand')} onMove={onItemMove} onTap={() => setFurniturePicker('nightstand')} roomRef={roomRef} zBase={3}>
+          <NightstandSVG color={shopItems.find(i => i.id === 'nightstand')?.color} />
+        </DraggableDecor>
+      )}
 
-      {/* ── Bed — draggable ── */}
-      <DraggableDecor itemId="bed" pos={bedPos ?? { x: 58, y: 34 }} onMove={(_, pos) => onBedMove?.(pos)} onTap={() => setFurniturePicker('bed')} roomRef={roomRef} zBase={2}>
-        <BedDecor accentColor={accentColor} color={bedColor} />
-      </DraggableDecor>
+      {/* ── Bed — draggable, toggled via shop ── */}
+      {placed('bed') && (
+        <DraggableDecor itemId="bed" pos={itemPos('bed')} onMove={onItemMove} onTap={() => setFurniturePicker('bed')} roomRef={roomRef} zBase={2}>
+          <BedDecor accentColor={accentColor} color={shopItems.find(i => i.id === 'bed')?.color} />
+        </DraggableDecor>
+      )}
 
       {/* sticky note */}
       <div onClick={e => { e.stopPropagation(); onNoteClick?.(); }}
@@ -573,7 +574,7 @@ export function RoomScene2D({
       {placed('cactus')  && <DraggableDecor itemId="cactus"  pos={itemPos('cactus')}  onMove={onItemMove} roomRef={roomRef}><CactusSVG /></DraggableDecor>}
       {placed('lamp')    && <DraggableDecor itemId="lamp"    pos={itemPos('lamp')}    onMove={onItemMove} roomRef={roomRef}><LampSVG glowing={mood==='night'} /></DraggableDecor>}
       {placed('books')   && <DraggableDecor itemId="books"   pos={itemPos('books')}   onMove={onItemMove} roomRef={roomRef}><BooksSVG /></DraggableDecor>}
-      {placed('rug')     && <DraggableDecor itemId="rug"     pos={itemPos('rug')}     onMove={onItemMove} onTap={() => setFurniturePicker('rug')} roomRef={roomRef}><RugSVG color={rugColor} /></DraggableDecor>}
+      {placed('rug')     && <DraggableDecor itemId="rug"     pos={itemPos('rug')}     onMove={onItemMove} onTap={() => setFurniturePicker('rug')} roomRef={roomRef}><RugSVG color={shopItems.find(i => i.id === 'rug')?.color} /></DraggableDecor>}
       {placed('candles') && <DraggableDecor itemId="candles" pos={itemPos('candles')} onMove={onItemMove} roomRef={roomRef}><CandlesSVG /></DraggableDecor>}
       {placed('cat')     && <DraggableDecor itemId="cat" pos={itemPos('cat')} onMove={onItemMove} onTap={tapCat} roomRef={roomRef}><CatSVG bodyColor={CAT_COLORS[catColorIdx??0]} wiggling={catWiggling} /></DraggableDecor>}
 
@@ -608,10 +609,10 @@ export function RoomScene2D({
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}>
             {FURNITURE_COLORS.map(col => {
-              const current = furniturePicker === 'bed' ? (bedColor || accentColor) : furniturePicker === 'rug' ? rugColor : nightstandColor;
+              const current = shopItems.find(i => i.id === furniturePicker)?.color;
               const active = col === current;
               return (
-                <div key={col} onClick={() => { onFurnitureColor?.(furniturePicker, col); setFurniturePicker(null); }}
+                <div key={col} onClick={() => { onItemColor?.(furniturePicker, col); setFurniturePicker(null); }}
                   style={{ width: 30, height: 30, borderRadius: '50%', background: col, cursor: 'pointer', flexShrink: 0,
                     boxShadow: active ? `0 0 0 2.5px white, 0 0 0 4.5px ${col}` : '0 1px 4px rgba(0,0,0,0.18)',
                     transform: active ? 'scale(1.15)' : 'scale(1)', transition: 'transform 0.12s' }} />
