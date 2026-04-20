@@ -102,6 +102,7 @@ export const DEFAULT_ROOM = {
   shopItems:      DEFAULT_SHOP,
   note:           "can't wait to see you 🌙",
   notePhoto:      null,
+  notes:          [],
   roomName:       'our little nest 🏡',
   avatarA:        { bodyColor: 'oklch(60% 0.11 42)', blushColor: 'oklch(82% 0.09 20)', name: 'River', pos: { x: 18, y: 66 }, accessory: 'none' },
   avatarB:        { bodyColor: 'oklch(78% 0.08 20)', blushColor: 'oklch(80% 0.09 45)', name: 'Quinn', pos: { x: 55, y: 66 }, accessory: 'none' },

@@ -4,7 +4,7 @@ import { MOODS, CAT_COLORS, PING_MESSAGES } from '../constants.js';
 const DRAG_THRESHOLD = 6;
 
 // ── Draggable wrapper ────────────────────────────────────────
-function DraggableDecor({ itemId, pos, onMove, onTap, roomRef, children }) {
+function DraggableDecor({ itemId, pos, onMove, onTap, roomRef, zBase = 0, children }) {
   const [livePos, setLivePos] = React.useState(pos);
   const [dragging, setDragging] = React.useState(false);
   const startRef   = React.useRef(null);
@@ -45,7 +45,7 @@ function DraggableDecor({ itemId, pos, onMove, onTap, roomRef, children }) {
     <div onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp}
       style={{ position: 'absolute', left: `${livePos.x}%`, top: `${livePos.y}%`,
         cursor: dragging ? 'grabbing' : 'grab', userSelect: 'none', touchAction: 'none',
-        zIndex: dragging ? 200 : Math.round(livePos.y) + 4,
+        zIndex: dragging ? 200 : zBase + Math.round(livePos.y) + 4,
         transform: dragging ? 'scale(1.12) rotate(-3deg)' : 'scale(1)',
         filter: dragging ? 'drop-shadow(0 10px 18px rgba(0,0,0,0.28))' : 'none',
         transition: dragging ? 'none' : 'transform 0.2s, filter 0.2s',
@@ -475,8 +475,8 @@ export function RoomScene2D({
       {placed('candles') && <DraggableDecor itemId="candles" pos={itemPos('candles')} onMove={onItemMove} roomRef={roomRef}><CandlesSVG /></DraggableDecor>}
       {placed('cat')     && <DraggableDecor itemId="cat" pos={itemPos('cat')} onMove={onItemMove} onTap={tapCat} roomRef={roomRef}><CatSVG bodyColor={CAT_COLORS[catColorIdx??0]} wiggling={catWiggling} /></DraggableDecor>}
 
-      {/* ── Blob A — draggable ── */}
-      <DraggableDecor itemId="blobA" pos={avatarA?.pos ?? {x:18,y:66}} onMove={(_,pos) => onBlobMove?.('a',pos)} onTap={() => tapBlob('a')} roomRef={roomRef}>
+      {/* ── Blob A — draggable, always in front of decor ── */}
+      <DraggableDecor itemId="blobA" pos={avatarA?.pos ?? {x:18,y:66}} onMove={(_,pos) => onBlobMove?.('a',pos)} onTap={() => tapBlob('a')} roomRef={roomRef} zBase={60}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
           <BlobAvatar bodyColor={avatarA?.bodyColor} blushColor={avatarA?.blushColor} size={64} name={avatarA?.name} bouncing={bouncingA} floatAnim="blobFloat" sleeping={sleepA} pinged={showPing} accessory={avatarA?.accessory} />
           <div onPointerDown={e => e.stopPropagation()} onClick={() => onToggleSleep?.('a')}
@@ -486,8 +486,8 @@ export function RoomScene2D({
         </div>
       </DraggableDecor>
 
-      {/* ── Blob B — draggable ── */}
-      <DraggableDecor itemId="blobB" pos={avatarB?.pos ?? {x:55,y:66}} onMove={(_,pos) => onBlobMove?.('b',pos)} onTap={() => tapBlob('b')} roomRef={roomRef}>
+      {/* ── Blob B — draggable, always in front of decor ── */}
+      <DraggableDecor itemId="blobB" pos={avatarB?.pos ?? {x:55,y:66}} onMove={(_,pos) => onBlobMove?.('b',pos)} onTap={() => tapBlob('b')} roomRef={roomRef} zBase={60}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
           <BlobAvatar bodyColor={avatarB?.bodyColor} blushColor={avatarB?.blushColor} size={64} name={avatarB?.name} flip bouncing={bouncingB} floatAnim="blobFloatB" sleeping={sleepB} pinged={showPing} accessory={avatarB?.accessory} />
           <div onPointerDown={e => e.stopPropagation()} onClick={() => onToggleSleep?.('b')}

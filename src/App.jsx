@@ -30,6 +30,14 @@ export default function App() {
   const [roomCode, setRoomCode] = React.useState(() => getLastRoomCode());
   const [screen,   setScreen]   = React.useState('room');
 
+  // Which blob is this person? Stored per-device in localStorage (not synced)
+  const [myBlob, setMyBlobState] = React.useState(() => localStorage.getItem('nestled_my_blob') || null);
+  const setMyBlob = (blob) => {
+    if (blob) localStorage.setItem('nestled_my_blob', blob);
+    else      localStorage.removeItem('nestled_my_blob');
+    setMyBlobState(blob);
+  };
+
   const { room, updateRoom, status } = useRoom(roomCode);
 
   const enterRoom = (code) => { saveRoomCode(code); setRoomCode(code); setScreen('room'); };
@@ -87,8 +95,22 @@ export default function App() {
   // ── room meta ────────────────────────────────────────────────
   const setRoomName = (name) => updateRoom({ roomName: name });
 
-  // ── note (now includes photo) ────────────────────────────────
-  const saveNote = ({ note, notePhoto }) => updateRoom({ note, notePhoto: notePhoto ?? room.notePhoto ?? null });
+  // ── note — appends to history, keeps latest as room.note ────
+  const saveNote = ({ text, photo, authorBlob, authorName }) => {
+    const entry = {
+      id:         Date.now(),
+      text:       text || '',
+      photo:      photo ?? null,
+      authorBlob: authorBlob ?? myBlob,
+      authorName: authorName ?? (myBlob === 'a' ? (room.avatarA?.name || 'you') : (room.avatarB?.name || 'them')),
+      ts:         Date.now(),
+    };
+    updateRoom({
+      notes:     [entry, ...(room.notes || []).slice(0, 29)],   // keep last 30
+      note:      text || room.note || '',                        // latest for sticky note
+      notePhoto: photo ?? room.notePhoto ?? null,
+    });
+  };
 
   // ── shared screen content ────────────────────────────────────
   const screens = (
@@ -105,7 +127,7 @@ export default function App() {
           shopItems={room.shopItems}
           coins={room.coins}
           catColorIdx={room.catColorIdx ?? 0}
-          noteText={room.note}
+          noteText={(room.notes?.[0]?.text) || room.note || ''}
           sleepA={room.sleepA ?? false}
           sleepB={room.sleepB ?? false}
           ping={room.ping ?? null}
@@ -157,10 +179,11 @@ export default function App() {
       {screen === 'note' && (
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: P.bg }}>
           <ScreenHeader title="sticky note" />
-          <div style={{ flex: 1, overflow: 'auto', WebkitOverflowScrolling: 'touch' }}>
+          <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
             <NoteScreen
-              note={room.note}
-              notePhoto={room.notePhoto ?? null}
+              notes={room.notes ?? []}
+              myBlob={myBlob}
+              onSetMyBlob={setMyBlob}
               onSave={saveNote}
               avatarA={room.avatarA}
               avatarB={room.avatarB}
