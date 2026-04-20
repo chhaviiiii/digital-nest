@@ -443,15 +443,15 @@ export function RoomScene2D({
         )}
       </div>
 
-      {/* Countdown widget */}
+      {/* Countdown widget — sits right below the room name */}
       {daysUntil !== null && (
-        <div style={{ position: 'absolute', top: 66, left: '50%', transform: 'translateX(-50%)', background: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(8px)', borderRadius: 14, padding: '5px 10px', textAlign: 'center', zIndex: 3, boxShadow: '0 1px 6px rgba(0,0,0,0.10)', pointerEvents: 'none', minWidth: 80 }}>
-          <div style={{ fontFamily: '"Nunito",sans-serif', fontSize: 9, fontWeight: 700, color: 'oklch(50% 0.05 50)', letterSpacing: 0.5, textTransform: 'uppercase' }}>
+        <div style={{ position: 'absolute', top: 88, left: 16, background: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(8px)', borderRadius: 12, padding: '4px 9px', zIndex: 3, boxShadow: '0 1px 6px rgba(0,0,0,0.10)', pointerEvents: 'none' }}>
+          <div style={{ fontFamily: '"Nunito",sans-serif', fontSize: 9, fontWeight: 700, color: 'oklch(50% 0.05 50)', letterSpacing: 0.4, textTransform: 'uppercase' }}>
             {daysUntil > 0 ? `see you in` : daysUntil === 0 ? '🎉 today!' : `${Math.abs(daysUntil)}d ago`}
           </div>
           {daysUntil > 0 && (
-            <div style={{ fontFamily: '"DM Serif Display",serif', fontStyle: 'italic', fontSize: 16, color: 'oklch(44% 0.09 50)', lineHeight: 1.1 }}>
-              {daysUntil} {daysUntil === 1 ? 'day' : 'days'} 📅
+            <div style={{ fontFamily: '"DM Serif Display",serif', fontStyle: 'italic', fontSize: 15, color: 'oklch(44% 0.09 50)', lineHeight: 1.15 }}>
+              {daysUntil} {daysUntil === 1 ? 'day' : 'days'} ❤️
             </div>
           )}
         </div>
