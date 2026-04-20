@@ -37,6 +37,33 @@ export const WALL_PRESETS   = ['oklch(93% 0.022 55)', 'oklch(91% 0.025 20)', 'ok
 export const FLOOR_PRESETS  = ['oklch(65% 0.08 54)', 'oklch(40% 0.07 48)', 'oklch(78% 0.05 58)', 'oklch(60% 0.10 40)', 'oklch(55% 0.06 80)', 'oklch(70% 0.06 50)'];
 export const ACCENT_PRESETS = ['oklch(58% 0.11 42)', 'oklch(55% 0.12 20)', 'oklch(52% 0.10 155)', 'oklch(55% 0.10 280)', 'oklch(55% 0.10 240)', 'oklch(58% 0.12 68)', 'oklch(48% 0.09 310)'];
 
+export const ROOM_PRESETS = [
+  { name: 'Cozy Autumn 🍂', wallColor: 'oklch(91% 0.025 20)',  floorColor: 'oklch(60% 0.10 40)',  accentColor: 'oklch(55% 0.12 20)'  },
+  { name: 'Midnight 🌙',    wallColor: 'oklch(22% 0.04 265)',  floorColor: 'oklch(18% 0.03 260)', accentColor: 'oklch(55% 0.10 280)' },
+  { name: 'Spring 🌸',      wallColor: 'oklch(92% 0.025 140)', floorColor: 'oklch(78% 0.05 130)', accentColor: 'oklch(52% 0.10 155)' },
+  { name: 'Ocean 🌊',       wallColor: 'oklch(91% 0.018 220)', floorColor: 'oklch(60% 0.08 215)', accentColor: 'oklch(55% 0.10 240)' },
+  { name: 'Lavender 💜',   wallColor: 'oklch(91% 0.022 300)', floorColor: 'oklch(68% 0.07 295)', accentColor: 'oklch(52% 0.10 280)' },
+];
+
+export const ACCESSORIES = [
+  { id: 'none',   label: 'None'       },
+  { id: 'crown',  label: 'Crown 👑'   },
+  { id: 'bow',    label: 'Bow 🎀'     },
+  { id: 'halo',   label: 'Halo ✨'    },
+  { id: 'flower', label: 'Flower 🌸'  },
+];
+
+export const REACTION_EMOJIS = ['❤️', '🌸', '✨', '🎉', '💫', '🐾'];
+
+export const PING_MESSAGES = [
+  { msg: 'miss you 💕',         emoji: '💕' },
+  { msg: 'thinking of you 🌸', emoji: '🌸' },
+  { msg: 'come online! 📱',    emoji: '📱' },
+  { msg: 'good morning ☀️',    emoji: '☀️' },
+  { msg: 'goodnight 🌙',       emoji: '🌙' },
+  { msg: 'love you 💖',        emoji: '💖' },
+];
+
 export const DEFAULT_TASKS = [
   { id: 1, text: 'Good morning text',    coins: 3,  done: false },
   { id: 2, text: 'Make coffee together', coins: 5,  done: false },
@@ -67,18 +94,25 @@ export const CAT_COLORS = [
 ];
 
 export const DEFAULT_ROOM = {
-  wallColor:    'oklch(93% 0.022 55)',
-  floorColor:   'oklch(65% 0.08 54)',
-  accentColor:  'oklch(58% 0.11 42)',
-  mood:         'golden',
-  coins:        240,
-  catColorIdx:  0,
-  tasks:        DEFAULT_TASKS,
-  shopItems:    DEFAULT_SHOP,
-  note:         "can't wait to see you 🌙",
-  avatarA:      { bodyColor: 'oklch(60% 0.11 42)', blushColor: 'oklch(82% 0.09 20)', name: 'River', pos: { x: 18, y: 66 } },
-  avatarB:      { bodyColor: 'oklch(78% 0.08 20)', blushColor: 'oklch(80% 0.09 45)', name: 'Quinn', pos: { x: 55, y: 66 } },
-  sleepA:       false,
-  sleepB:       false,
-  ping:         null,
+  wallColor:      'oklch(93% 0.022 55)',
+  floorColor:     'oklch(65% 0.08 54)',
+  accentColor:    'oklch(58% 0.11 42)',
+  mood:           'golden',
+  coins:          240,
+  catColorIdx:    0,
+  tasks:          DEFAULT_TASKS,
+  shopItems:      DEFAULT_SHOP,
+  note:           "can't wait to see you 🌙",
+  notePhoto:      null,
+  roomName:       'our little nest 🏡',
+  avatarA:        { bodyColor: 'oklch(60% 0.11 42)', blushColor: 'oklch(82% 0.09 20)', name: 'River', pos: { x: 18, y: 66 }, accessory: 'none' },
+  avatarB:        { bodyColor: 'oklch(78% 0.08 20)', blushColor: 'oklch(80% 0.09 45)', name: 'Quinn', pos: { x: 55, y: 66 }, accessory: 'none' },
+  sleepA:         false,
+  sleepB:         false,
+  ping:           null,
+  streak:         0,
+  lastActive:     null,
+  reactions:      [],
+  completedTasks: [],
+  nextDate:       null,
 };
