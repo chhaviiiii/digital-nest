@@ -53,6 +53,19 @@ export const ACCESSORIES = [
   { id: 'flower', label: 'Flower 🌸'  },
 ];
 
+export const FURNITURE_COLORS = [
+  'oklch(46% 0.08 46)',   // walnut
+  'oklch(64% 0.09 54)',   // maple
+  'oklch(94% 0.016 56)',  // cream / off-white
+  'oklch(52% 0.10 155)',  // sage
+  'oklch(36% 0.08 250)',  // navy
+  'oklch(73% 0.09 18)',   // blush
+  'oklch(58% 0.11 42)',   // terracotta
+  'oklch(28% 0.05 40)',   // espresso
+  'oklch(60% 0.08 295)',  // lavender
+  'oklch(68% 0.07 78)',   // golden straw
+];
+
 export const PING_MESSAGES = [
   { msg: 'miss you 💕',         emoji: '💕' },
   { msg: 'thinking of you 🌸', emoji: '🌸' },
@@ -114,4 +127,8 @@ export const DEFAULT_ROOM = {
   completedTasks: [],
   nextDate:       null,
   bedPos:         { x: 58, y: 34 },
+  nightstandPos:  { x: 53, y: 36 },
+  bedColor:       null,
+  rugColor:       null,
+  nightstandColor:null,
 };

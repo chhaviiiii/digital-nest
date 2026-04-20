@@ -80,7 +80,13 @@ export default function App() {
   const moveItem     = (itemId, pos) => updateRoom({ shopItems: room.shopItems.map(i => i.id === itemId ? { ...i, pos } : i) });
 
   // ── blob helpers ─────────────────────────────────────────────
-  const moveBed    = (pos) => updateRoom({ bedPos: pos });
+  const moveBed        = (pos)          => updateRoom({ bedPos: pos });
+  const moveNightstand = (pos)          => updateRoom({ nightstandPos: pos });
+  const setFurnitureColor = (target, color) => {
+    if (target === 'bed')        updateRoom({ bedColor: color });
+    else if (target === 'rug')   updateRoom({ rugColor: color });
+    else if (target === 'nightstand') updateRoom({ nightstandColor: color });
+  };
   const moveBlob   = (which, pos) => {
     if (which === 'a') updateRoom({ avatarA: { ...room.avatarA, pos } });
     else               updateRoom({ avatarB: { ...room.avatarB, pos } });
@@ -136,8 +142,14 @@ export default function App() {
           nextDate={room.nextDate ?? null}
           roomName={room.roomName ?? ''}
           bedPos={room.bedPos ?? { x: 58, y: 34 }}
+          nightstandPos={room.nightstandPos ?? { x: 53, y: 36 }}
+          bedColor={room.bedColor ?? null}
+          rugColor={room.rugColor ?? null}
+          nightstandColor={room.nightstandColor ?? null}
           onMoodChange={mood => updateRoom({ mood })}
           onBedMove={moveBed}
+          onNightstandMove={moveNightstand}
+          onFurnitureColor={setFurnitureColor}
           onAvatarTap={() => setScreen('customize')}
           onNoteClick={() => setScreen('note')}
           onCatColorChange={idx => updateRoom({ catColorIdx: idx })}

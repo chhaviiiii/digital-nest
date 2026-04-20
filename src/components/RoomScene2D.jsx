@@ -1,5 +1,5 @@
 import React from 'react';
-import { MOODS, CAT_COLORS, PING_MESSAGES } from '../constants.js';
+import { MOODS, CAT_COLORS, PING_MESSAGES, FURNITURE_COLORS } from '../constants.js';
 
 const DRAG_THRESHOLD = 6;
 
@@ -280,11 +280,12 @@ function CatSVG({ bodyColor, wiggling }) {
     </div>
   );
 }
-function RugSVG() {
+function RugSVG({ color }) {
+  const c = color || 'oklch(69% 0.09 28)';
   return (
-    <div style={{ width: 210, height: 60, borderRadius: 30, background: 'oklch(69% 0.09 28)', boxShadow: '0 4px 14px rgba(0,0,0,0.14)', position: 'relative' }}>
-      <div style={{ position: 'absolute', inset: 7, borderRadius: 23, border: '2.5px solid oklch(78% 0.08 32)' }} />
-      <div style={{ position: 'absolute', inset: 16, borderRadius: 14, border: '1.5px dashed oklch(80% 0.07 36)' }} />
+    <div style={{ width: 210, height: 60, borderRadius: 30, background: c, boxShadow: '0 4px 14px rgba(0,0,0,0.14)', position: 'relative' }}>
+      <div style={{ position: 'absolute', inset: 7,  borderRadius: 23, border: '2.5px solid rgba(255,255,255,0.35)' }} />
+      <div style={{ position: 'absolute', inset: 16, borderRadius: 14, border: '1.5px dashed rgba(255,255,255,0.25)' }} />
     </div>
   );
 }
@@ -311,8 +312,8 @@ function BooksSVG() {
     </div>
   );
 }
-function BedDecor({ accentColor }) {
-  const ac  = accentColor || 'oklch(58% 0.11 42)';
+function BedDecor({ accentColor, color }) {
+  const ac  = color || accentColor || 'oklch(58% 0.11 42)';
   const wood      = 'oklch(46% 0.08 46)';
   const woodLight = 'oklch(54% 0.09 49)';
   const woodDark  = 'oklch(38% 0.06 44)';
@@ -376,6 +377,47 @@ function BedDecor({ accentColor }) {
     </div>
   );
 }
+function NightstandSVG({ color }) {
+  const c = color || 'oklch(46% 0.08 46)';
+  return (
+    <svg width="44" height="60" viewBox="0 0 44 60">
+      {/* tiny glass of water on top */}
+      <rect x="15" y="1" width="14" height="10" rx="3.5" fill="oklch(80% 0.07 220)" opacity="0.62"/>
+      <rect x="16" y="2" width="12" height="4"  rx="2"   fill="white" opacity="0.40"/>
+
+      {/* table surface */}
+      <rect x="0"  y="9"  width="44" height="8" rx="4" fill={c}/>
+      <rect x="1"  y="10" width="42" height="4" rx="3" fill="white" opacity="0.22"/>
+
+      {/* body */}
+      <rect x="2"  y="16" width="40" height="30" rx="3" fill={c}/>
+      {/* edge highlight */}
+      <rect x="2"  y="16" width="4"  height="30" rx="2" fill="white" opacity="0.11"/>
+
+      {/* drawer 1 */}
+      <rect x="5"  y="18" width="34" height="11" rx="2" fill="white" opacity="0.09"/>
+      <rect x="6"  y="19" width="32" height="9"  rx="2" fill="black" opacity="0.07"/>
+      {/* handle 1 */}
+      <rect x="16" y="22" width="12" height="3"  rx="1.5" fill="white" opacity="0.55"/>
+
+      {/* divider */}
+      <rect x="5"  y="30" width="34" height="1"  fill="white" opacity="0.18"/>
+
+      {/* drawer 2 */}
+      <rect x="5"  y="31" width="34" height="13" rx="2" fill="white" opacity="0.07"/>
+      {/* handle 2 */}
+      <rect x="16" y="36" width="12" height="3"  rx="1.5" fill="white" opacity="0.55"/>
+
+      {/* legs */}
+      <rect x="5"  y="45" width="8"  height="15" rx="4" fill={c}/>
+      <rect x="31" y="45" width="8"  height="15" rx="4" fill={c}/>
+      {/* leg top shadow */}
+      <rect x="5"  y="45" width="8"  height="4"  rx="3" fill="black" opacity="0.13"/>
+      <rect x="31" y="45" width="8"  height="4"  rx="3" fill="black" opacity="0.13"/>
+    </svg>
+  );
+}
+
 function FairyLights({ mood }) {
   const glowColor = mood === 'night' ? 'oklch(90% 0.18 78)' : 'oklch(88% 0.14 74)';
   const count = 12;
@@ -395,9 +437,11 @@ export function RoomScene2D({
   avatarA, avatarB, shopItems = [], coins = 0, catColorIdx = 0, noteText,
   sleepA = false, sleepB = false, ping = null,
   streak = 0, nextDate = null, roomName = '',
-  bedPos,
+  bedPos, nightstandPos,
+  bedColor, rugColor, nightstandColor,
   onMoodChange, onAvatarTap, onNoteClick,
-  onCatColorChange, onItemMove, onBlobMove, onBedMove, onToggleSleep,
+  onCatColorChange, onItemMove, onBlobMove, onBedMove, onNightstandMove,
+  onFurnitureColor, onToggleSleep,
   onPing, onRoomNameChange,
 }) {
   const wc = wallColor  || 'oklch(93% 0.022 55)';
@@ -406,10 +450,11 @@ export function RoomScene2D({
 
   const [bouncingA, setBouncingA] = React.useState(false);
   const [bouncingB, setBouncingB] = React.useState(false);
-  const [catWiggling, setCatWiggling] = React.useState(false);
-  const [showPing,    setShowPing]    = React.useState(false);
-  const [pingMsg,     setPingMsg]     = React.useState('');
+  const [catWiggling,    setCatWiggling]    = React.useState(false);
+  const [showPing,       setShowPing]       = React.useState(false);
+  const [pingMsg,        setPingMsg]        = React.useState('');
   const [showPingPicker, setShowPingPicker] = React.useState(false);
+  const [furniturePicker, setFurniturePicker] = React.useState(null); // 'bed'|'rug'|'nightstand'
 
   // room name inline edit
   const [editingName, setEditingName] = React.useState(false);
@@ -505,9 +550,14 @@ export function RoomScene2D({
         </div>
       )}
 
+      {/* ── Nightstand — draggable ── */}
+      <DraggableDecor itemId="nightstand" pos={nightstandPos ?? { x: 53, y: 36 }} onMove={(_, pos) => onNightstandMove?.(pos)} onTap={() => setFurniturePicker('nightstand')} roomRef={roomRef} zBase={3}>
+        <NightstandSVG color={nightstandColor} />
+      </DraggableDecor>
+
       {/* ── Bed — draggable ── */}
-      <DraggableDecor itemId="bed" pos={bedPos ?? { x: 58, y: 34 }} onMove={(_, pos) => onBedMove?.(pos)} roomRef={roomRef} zBase={2}>
-        <BedDecor accentColor={accentColor} />
+      <DraggableDecor itemId="bed" pos={bedPos ?? { x: 58, y: 34 }} onMove={(_, pos) => onBedMove?.(pos)} onTap={() => setFurniturePicker('bed')} roomRef={roomRef} zBase={2}>
+        <BedDecor accentColor={accentColor} color={bedColor} />
       </DraggableDecor>
 
       {/* sticky note */}
@@ -523,7 +573,7 @@ export function RoomScene2D({
       {placed('cactus')  && <DraggableDecor itemId="cactus"  pos={itemPos('cactus')}  onMove={onItemMove} roomRef={roomRef}><CactusSVG /></DraggableDecor>}
       {placed('lamp')    && <DraggableDecor itemId="lamp"    pos={itemPos('lamp')}    onMove={onItemMove} roomRef={roomRef}><LampSVG glowing={mood==='night'} /></DraggableDecor>}
       {placed('books')   && <DraggableDecor itemId="books"   pos={itemPos('books')}   onMove={onItemMove} roomRef={roomRef}><BooksSVG /></DraggableDecor>}
-      {placed('rug')     && <DraggableDecor itemId="rug"     pos={itemPos('rug')}     onMove={onItemMove} roomRef={roomRef}><RugSVG /></DraggableDecor>}
+      {placed('rug')     && <DraggableDecor itemId="rug"     pos={itemPos('rug')}     onMove={onItemMove} onTap={() => setFurniturePicker('rug')} roomRef={roomRef}><RugSVG color={rugColor} /></DraggableDecor>}
       {placed('candles') && <DraggableDecor itemId="candles" pos={itemPos('candles')} onMove={onItemMove} roomRef={roomRef}><CandlesSVG /></DraggableDecor>}
       {placed('cat')     && <DraggableDecor itemId="cat" pos={itemPos('cat')} onMove={onItemMove} onTap={tapCat} roomRef={roomRef}><CatSVG bodyColor={CAT_COLORS[catColorIdx??0]} wiggling={catWiggling} /></DraggableDecor>}
 
@@ -548,6 +598,29 @@ export function RoomScene2D({
           </div>
         </div>
       </DraggableDecor>
+
+      {/* ── Furniture colour picker ── */}
+      {furniturePicker && (
+        <div onClick={e => e.stopPropagation()}
+          style={{ position: 'absolute', bottom: 132, left: '50%', transform: 'translateX(-50%)', background: 'rgba(255,255,255,0.97)', borderRadius: 18, padding: '12px 14px', boxShadow: '0 6px 24px rgba(0,0,0,0.14)', zIndex: 60, minWidth: 230 }}>
+          <div style={{ fontFamily: '"Nunito",sans-serif', fontSize: 10, fontWeight: 700, color: 'oklch(50% 0.05 50)', textTransform: 'uppercase', letterSpacing: 1.4, textAlign: 'center', marginBottom: 10 }}>
+            {furniturePicker === 'bed' ? 'duvet colour' : furniturePicker === 'rug' ? 'rug colour' : 'nightstand colour'}
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}>
+            {FURNITURE_COLORS.map(col => {
+              const current = furniturePicker === 'bed' ? (bedColor || accentColor) : furniturePicker === 'rug' ? rugColor : nightstandColor;
+              const active = col === current;
+              return (
+                <div key={col} onClick={() => { onFurnitureColor?.(furniturePicker, col); setFurniturePicker(null); }}
+                  style={{ width: 30, height: 30, borderRadius: '50%', background: col, cursor: 'pointer', flexShrink: 0,
+                    boxShadow: active ? `0 0 0 2.5px white, 0 0 0 4.5px ${col}` : '0 1px 4px rgba(0,0,0,0.18)',
+                    transform: active ? 'scale(1.15)' : 'scale(1)', transition: 'transform 0.12s' }} />
+              );
+            })}
+          </div>
+          <div onClick={() => setFurniturePicker(null)} style={{ textAlign: 'center', fontFamily: '"Nunito",sans-serif', fontSize: 11, color: 'oklch(60% 0.04 50)', cursor: 'pointer', marginTop: 10 }}>cancel</div>
+        </div>
+      )}
 
       {/* ── Ping message popover ── */}
       {showPingPicker && (
