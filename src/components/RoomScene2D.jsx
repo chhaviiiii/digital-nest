@@ -317,49 +317,61 @@ function BedDecor({ accentColor, color }) {
   const wood      = 'oklch(46% 0.08 46)';
   const woodLight = 'oklch(54% 0.09 49)';
   const woodDark  = 'oklch(38% 0.06 44)';
-  // Wide, flat bed — 174 wide × 66 tall
+  // 174 × 200
   return (
     <div>
-      <svg width="174" height="66" viewBox="0 0 174 66">
+      <svg width="174" height="200" viewBox="0 0 174 200">
 
-        {/* ── Headboard — slim, wide ── */}
-        <rect x="0" y="0" width="174" height="19" rx="6" fill={wood}/>
-        <rect x="3" y="2" width="168" height="15" rx="5" fill={woodLight}/>
-        {/* single elegant arch */}
-        <path d="M16,16 Q87,4 158,16" fill="none" stroke="oklch(63% 0.08 52)" strokeWidth="2" strokeLinecap="round"/>
+        {/* ── Headboard ── */}
+        <rect x="0" y="0" width="174" height="38" rx="8" fill={wood}/>
+        <rect x="4" y="3" width="166" height="32" rx="6" fill={woodLight}/>
+        <path d="M18,32 Q87,10 156,32" fill="none" stroke="oklch(63% 0.08 52)" strokeWidth="2.5" strokeLinecap="round"/>
+        <circle cx="58"  cy="20" r="2.6" fill={woodDark} opacity="0.7"/>
+        <circle cx="87"  cy="15" r="2.6" fill={woodDark} opacity="0.7"/>
+        <circle cx="116" cy="20" r="2.6" fill={woodDark} opacity="0.7"/>
 
-        {/* ── Side rails — very slim ── */}
-        <rect x="0"   y="16" width="7" height="42" rx="2" fill={wood}/>
-        <rect x="167" y="16" width="7" height="42" rx="2" fill={wood}/>
+        {/* ── Side rails ── */}
+        <rect x="0"   y="34" width="9" height="138" rx="3" fill={wood}/>
+        <rect x="2"   y="36" width="5" height="134" rx="2" fill={woodLight}/>
+        <rect x="165" y="34" width="9" height="138" rx="3" fill={wood}/>
+        <rect x="167" y="36" width="5" height="134" rx="2" fill={woodLight}/>
 
-        {/* ── Footboard — just a sliver ── */}
-        <rect x="0"  y="58" width="174" height="8" rx="3" fill={wood}/>
-        <rect x="3"  y="59" width="168" height="5" rx="2" fill={woodLight}/>
+        {/* ── Footboard ── */}
+        <rect x="0"  y="170" width="174" height="16" rx="5" fill={wood}/>
+        <rect x="4"  y="173" width="166" height="10" rx="3" fill={woodLight}/>
+
+        {/* ── Legs ── */}
+        <rect x="6"   y="184" width="12" height="16" rx="5" fill={woodDark}/>
+        <rect x="156" y="184" width="12" height="16" rx="5" fill={woodDark}/>
 
         {/* ── Mattress ── */}
-        <rect x="7" y="16" width="160" height="44" rx="2" fill="oklch(97% 0.016 56)"/>
+        <rect x="9" y="34" width="156" height="138" rx="2" fill="oklch(97% 0.016 56)"/>
 
-        {/* ── Two pillows, side by side ── */}
-        {/* left */}
-        <rect x="10" y="18" width="68" height="17" rx="8" fill="white"/>
-        <rect x="13" y="20" width="62" height="7"  rx="4" fill="white" opacity="0.5"/>
-        <ellipse cx="44" cy="34" rx="32" ry="3" fill="oklch(82% 0.04 55)" opacity="0.3"/>
-        {/* right */}
-        <rect x="96" y="18" width="68" height="17" rx="8" fill="white"/>
-        <rect x="99" y="20" width="62" height="7"  rx="4" fill="white" opacity="0.5"/>
-        <ellipse cx="130" cy="34" rx="32" ry="3" fill="oklch(82% 0.04 55)" opacity="0.3"/>
+        {/* ── Pillows ── */}
+        <rect x="12" y="37" width="66" height="30" rx="14" fill="white"/>
+        <rect x="15" y="39" width="60" height="12" rx="6" fill="white" opacity="0.5"/>
+        <ellipse cx="45"  cy="66" rx="30" ry="4" fill="oklch(82% 0.04 55)" opacity="0.28"/>
+
+        <rect x="96" y="37" width="66" height="30" rx="14" fill="white"/>
+        <rect x="99" y="39" width="60" height="12" rx="6" fill="white" opacity="0.5"/>
+        <ellipse cx="129" cy="66" rx="30" ry="4" fill="oklch(82% 0.04 55)" opacity="0.28"/>
 
         {/* ── Sheet turndown ── */}
-        <rect x="7" y="34" width="160" height="5" rx="2" fill="oklch(91% 0.025 58)" opacity="0.85"/>
+        <rect x="9" y="66" width="156" height="8" rx="3" fill="oklch(91% 0.025 58)" opacity="0.9"/>
 
-        {/* ── Duvet — covers lower half, two puffer channels ── */}
-        <rect x="7" y="37" width="160" height="22" rx="4" fill={ac} opacity="0.93"/>
-        <rect x="7" y="37" width="160" height="8"  rx="4" fill="white" opacity="0.18"/>
-        <line x1="13" y1="45" x2="161" y2="45" stroke="white" strokeWidth="1" opacity="0.2"/>
-        <rect x="7" y="45" width="160" height="7"  fill="white" opacity="0.06"/>
-        <line x1="13" y1="52" x2="161" y2="52" stroke="white" strokeWidth="1" opacity="0.14"/>
-        {/* bottom shadow under duvet */}
-        <path d="M11,58 Q87,62 163,58" stroke={woodDark} strokeWidth="1.2" fill="none" opacity="0.12"/>
+        {/* ── Duvet — 4 puffer channels ── */}
+        <rect x="9" y="72" width="156" height="100" rx="6" fill={ac} opacity="0.93"/>
+        <rect x="9" y="72" width="156" height="16"  rx="5" fill="white" opacity="0.18"/>
+        <line x1="15" y1="88"  x2="159" y2="88"  stroke="white" strokeWidth="1.2" opacity="0.22"/>
+        <rect x="9" y="88"  width="156" height="16" fill="white" opacity="0.06"/>
+        <line x1="15" y1="104" x2="159" y2="104" stroke="white" strokeWidth="1.2" opacity="0.17"/>
+        <rect x="9" y="104" width="156" height="16" fill="white" opacity="0.04"/>
+        <line x1="15" y1="120" x2="159" y2="120" stroke="white" strokeWidth="1.2" opacity="0.13"/>
+        <rect x="9" y="120" width="156" height="16" fill="white" opacity="0.03"/>
+        <line x1="15" y1="136" x2="159" y2="136" stroke="white" strokeWidth="1.2" opacity="0.10"/>
+        <rect x="9" y="136" width="156" height="36" rx="5" fill={ac} opacity="0.88"/>
+        {/* duvet bottom shadow */}
+        <path d="M13,170 Q87,175 161,170" stroke={woodDark} strokeWidth="1.5" fill="none" opacity="0.13"/>
 
       </svg>
     </div>
