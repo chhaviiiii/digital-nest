@@ -74,6 +74,17 @@ export default function App() {
     updateRoom({ shopItems: room.shopItems.map(i => i.id === item.id ? { ...i, placed: !i.placed } : i) });
   };
 
+  const moveItem = (itemId, pos) => {
+    updateRoom({ shopItems: room.shopItems.map(i => i.id === itemId ? { ...i, pos } : i) });
+  };
+
+  const toggleSleep = (which) => {
+    if (which === 'a') updateRoom({ sleepA: !room.sleepA });
+    else               updateRoom({ sleepB: !room.sleepB });
+  };
+
+  const sendPing = () => updateRoom({ ping: { ts: Date.now() } });
+
   // ── render ───────────────────────────────────────────────────
   if (!roomCode) {
     return (
@@ -115,10 +126,16 @@ export default function App() {
               coins={room.coins}
               catColorIdx={room.catColorIdx ?? 0}
               noteText={room.note}
+              sleepA={room.sleepA ?? false}
+              sleepB={room.sleepB ?? false}
+              ping={room.ping ?? null}
               onMoodChange={mood => updateRoom({ mood })}
               onAvatarTap={() => setScreen('customize')}
               onNoteClick={() => setScreen('note')}
               onCatColorChange={idx => updateRoom({ catColorIdx: idx })}
+              onItemMove={moveItem}
+              onToggleSleep={toggleSleep}
+              onPing={sendPing}
             />
           )}
 

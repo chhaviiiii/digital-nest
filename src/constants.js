@@ -46,15 +46,16 @@ export const DEFAULT_TASKS = [
   { id: 6, text: 'Send a voice note',    coins: 4,  done: false },
 ];
 
+// pos is { x, y } as % of room container (top-left anchor)
 export const DEFAULT_SHOP = [
-  { id: 'plant',  label: 'Monstera',     icon: '🌿', cost: 30,  owned: true,  placed: true  },
-  { id: 'lamp',   label: 'Floor Lamp',   icon: '🏮', cost: 40,  owned: true,  placed: true  },
-  { id: 'rug',    label: 'Woven Rug',    icon: '🪹', cost: 20,  owned: true,  placed: true  },
-  { id: 'cat',    label: 'Little Cat',   icon: '🐱', cost: 80,  owned: false, placed: false },
-  { id: 'candles',label: 'Candles',      icon: '🕯',  cost: 15,  owned: false, placed: false },
-  { id: 'books',  label: 'Book Stack',   icon: '📚', cost: 20,  owned: false, placed: false },
-  { id: 'lights', label: 'Fairy Lights', icon: '✨', cost: 60,  owned: false, placed: false },
-  { id: 'cactus', label: 'Cactus',       icon: '🌵', cost: 25,  owned: false, placed: false },
+  { id: 'plant',  label: 'Monstera',     icon: '🌿', cost: 30,  owned: true,  placed: true,  pos: { x: 2,  y: 53 } },
+  { id: 'lamp',   label: 'Floor Lamp',   icon: '🏮', cost: 40,  owned: true,  placed: true,  pos: { x: 80, y: 47 } },
+  { id: 'rug',    label: 'Woven Rug',    icon: '🪹', cost: 20,  owned: true,  placed: true,  pos: { x: 28, y: 63 } },
+  { id: 'cat',    label: 'Little Cat',   icon: '🐱', cost: 80,  owned: false, placed: false, pos: { x: 37, y: 65 } },
+  { id: 'candles',label: 'Candles',      icon: '🕯',  cost: 15,  owned: false, placed: false, pos: { x: 3,  y: 64 } },
+  { id: 'books',  label: 'Book Stack',   icon: '📚', cost: 20,  owned: false, placed: false, pos: { x: 16, y: 64 } },
+  { id: 'lights', label: 'Fairy Lights', icon: '✨', cost: 60,  owned: false, placed: false, pos: { x: 0,  y: 0  } },
+  { id: 'cactus', label: 'Cactus',       icon: '🌵', cost: 25,  owned: false, placed: false, pos: { x: 3,  y: 52 } },
 ];
 
 export const CAT_COLORS = [
@@ -76,5 +77,8 @@ export const DEFAULT_ROOM = {
   shopItems:    DEFAULT_SHOP,
   note:         "can't wait to see you 🌙",
   avatarA:      { bodyColor: 'oklch(60% 0.11 42)', blushColor: 'oklch(82% 0.09 20)', name: 'River' },
-  avatarB:     { bodyColor: 'oklch(78% 0.08 20)', blushColor: 'oklch(80% 0.09 45)', name: 'Quinn' },
+  avatarB:      { bodyColor: 'oklch(78% 0.08 20)', blushColor: 'oklch(80% 0.09 45)', name: 'Quinn' },
+  sleepA:       false,
+  sleepB:       false,
+  ping:         null,
 };
