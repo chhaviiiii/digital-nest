@@ -113,4 +113,5 @@ export const DEFAULT_ROOM = {
   lastActive:     null,
   completedTasks: [],
   nextDate:       null,
+  bedPos:         { x: 58, y: 34 },
 };

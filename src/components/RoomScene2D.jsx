@@ -311,10 +311,10 @@ function BooksSVG() {
     </div>
   );
 }
-function BedDecor({ right, bottom, accentColor }) {
+function BedDecor({ accentColor }) {
   const ac = accentColor || 'oklch(58% 0.11 42)';
   return (
-    <div style={{ position: 'absolute', right, bottom, pointerEvents: 'none' }}>
+    <div>
       <svg width="118" height="82" viewBox="0 0 118 82">
         <rect x="0" y="0"  width="118" height="30" rx="6" fill="oklch(50% 0.07 52)" />
         <rect x="6" y="4"  width="106" height="22" rx="4" fill="oklch(56% 0.08 54)" />
@@ -347,8 +347,9 @@ export function RoomScene2D({
   avatarA, avatarB, shopItems = [], coins = 0, catColorIdx = 0, noteText,
   sleepA = false, sleepB = false, ping = null,
   streak = 0, nextDate = null, roomName = '',
+  bedPos,
   onMoodChange, onAvatarTap, onNoteClick,
-  onCatColorChange, onItemMove, onBlobMove, onToggleSleep,
+  onCatColorChange, onItemMove, onBlobMove, onBedMove, onToggleSleep,
   onPing, onRoomNameChange,
 }) {
   const wc = wallColor  || 'oklch(93% 0.022 55)';
@@ -456,7 +457,10 @@ export function RoomScene2D({
         </div>
       )}
 
-      <BedDecor right={8} bottom={200} accentColor={accentColor} />
+      {/* ── Bed — draggable ── */}
+      <DraggableDecor itemId="bed" pos={bedPos ?? { x: 58, y: 34 }} onMove={(_, pos) => onBedMove?.(pos)} roomRef={roomRef} zBase={2}>
+        <BedDecor accentColor={accentColor} />
+      </DraggableDecor>
 
       {/* sticky note */}
       <div onClick={e => { e.stopPropagation(); onNoteClick?.(); }}
