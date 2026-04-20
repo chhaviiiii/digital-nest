@@ -436,6 +436,7 @@ export function RoomScene2D({
   onNoteClick,
   onCatColorChange,
   onItemMove,
+  onBlobMove,
   onToggleSleep,
   onPing,
 }) {
@@ -559,65 +560,68 @@ export function RoomScene2D({
         </DraggableDecor>
       )}
 
-      {/* ── Avatars + sleep / ping controls ── */}
-      <div style={{ position: 'absolute', bottom: 92, left: 0, right: 0 }}>
-
-        {/* blob row */}
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', gap: 16 }}>
-
-          {/* Blob A */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-            <div style={{ cursor: 'pointer' }} onClick={() => tapBlob('a')}>
-              <BlobAvatar
-                bodyColor={avatarA?.bodyColor} blushColor={avatarA?.blushColor}
-                size={64} name={avatarA?.name}
-                bouncing={bouncingA} floatAnim="blobFloat"
-                sleeping={sleepA} pinged={showPing}
-              />
-            </div>
-            <Btn onClick={() => onToggleSleep?.('a')} active={sleepA} title="toggle sleep">
-              {sleepA ? '☀️' : '🌙'}
-            </Btn>
-          </div>
-
-          {/* Ping button — center */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 4, gap: 4 }}>
-            <div style={{ fontFamily: '"Nunito", sans-serif', fontSize: 9, color: 'rgba(80,60,40,0.4)', fontWeight: 700 }}>ping!</div>
-            <div
-              onClick={onPing}
-              style={{
-                width: 38, height: 38,
-                borderRadius: '50%',
-                background: 'rgba(255,255,255,0.9)',
-                backdropFilter: 'blur(8px)',
-                boxShadow: '0 2px 10px rgba(0,0,0,0.12)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 18, cursor: 'pointer',
-                userSelect: 'none',
-                transition: 'transform 0.12s',
-              }}
-              onPointerDown={e => e.currentTarget.style.transform = 'scale(0.88)'}
-              onPointerUp={e   => e.currentTarget.style.transform = 'scale(1)'}
-            >
-              💌
-            </div>
-          </div>
-
-          {/* Blob B */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-            <div style={{ cursor: 'pointer' }} onClick={() => tapBlob('b')}>
-              <BlobAvatar
-                bodyColor={avatarB?.bodyColor} blushColor={avatarB?.blushColor}
-                size={64} name={avatarB?.name} flip
-                bouncing={bouncingB} floatAnim="blobFloatB"
-                sleeping={sleepB} pinged={showPing}
-              />
-            </div>
-            <Btn onClick={() => onToggleSleep?.('b')} active={sleepB} title="toggle sleep">
-              {sleepB ? '☀️' : '🌙'}
-            </Btn>
+      {/* ── Blob A — draggable ── */}
+      <DraggableDecor
+        itemId="blobA"
+        pos={avatarA?.pos ?? { x: 18, y: 66 }}
+        onMove={(_, pos) => onBlobMove?.('a', pos)}
+        onTap={() => tapBlob('a')}
+        roomRef={roomRef}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+          <BlobAvatar
+            bodyColor={avatarA?.bodyColor} blushColor={avatarA?.blushColor}
+            size={64} name={avatarA?.name}
+            bouncing={bouncingA} floatAnim="blobFloat"
+            sleeping={sleepA} pinged={showPing}
+          />
+          {/* sleep button — stops pointer from reaching DraggableDecor so it never starts a drag */}
+          <div
+            onPointerDown={e => e.stopPropagation()}
+            onClick={() => onToggleSleep?.('a')}
+            title="toggle sleep"
+            style={{ background: sleepA ? 'rgba(0,0,0,0.12)' : 'rgba(255,255,255,0.82)', backdropFilter: 'blur(6px)', borderRadius: 14, padding: '4px 8px', fontSize: 12, cursor: 'pointer', boxShadow: '0 1px 5px rgba(0,0,0,0.10)', userSelect: 'none', lineHeight: 1 }}
+          >
+            {sleepA ? '☀️' : '🌙'}
           </div>
         </div>
+      </DraggableDecor>
+
+      {/* ── Blob B — draggable ── */}
+      <DraggableDecor
+        itemId="blobB"
+        pos={avatarB?.pos ?? { x: 55, y: 66 }}
+        onMove={(_, pos) => onBlobMove?.('b', pos)}
+        onTap={() => tapBlob('b')}
+        roomRef={roomRef}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+          <BlobAvatar
+            bodyColor={avatarB?.bodyColor} blushColor={avatarB?.blushColor}
+            size={64} name={avatarB?.name} flip
+            bouncing={bouncingB} floatAnim="blobFloatB"
+            sleeping={sleepB} pinged={showPing}
+          />
+          <div
+            onPointerDown={e => e.stopPropagation()}
+            onClick={() => onToggleSleep?.('b')}
+            title="toggle sleep"
+            style={{ background: sleepB ? 'rgba(0,0,0,0.12)' : 'rgba(255,255,255,0.82)', backdropFilter: 'blur(6px)', borderRadius: 14, padding: '4px 8px', fontSize: 12, cursor: 'pointer', boxShadow: '0 1px 5px rgba(0,0,0,0.10)', userSelect: 'none', lineHeight: 1 }}
+          >
+            {sleepB ? '☀️' : '🌙'}
+          </div>
+        </div>
+      </DraggableDecor>
+
+      {/* ── Ping button — fixed center bottom ── */}
+      <div style={{ position: 'absolute', bottom: 88, left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, zIndex: 10 }}>
+        <div style={{ fontFamily: '"Nunito", sans-serif', fontSize: 9, color: 'rgba(80,60,40,0.4)', fontWeight: 700, letterSpacing: 0.3 }}>ping!</div>
+        <div
+          onClick={onPing}
+          style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(8px)', boxShadow: '0 2px 10px rgba(0,0,0,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, cursor: 'pointer', userSelect: 'none', transition: 'transform 0.12s' }}
+          onPointerDown={e => e.currentTarget.style.transform = 'scale(0.85)'}
+          onPointerUp={e   => e.currentTarget.style.transform = 'scale(1)'}
+        >💌</div>
       </div>
 
       {/* coin pill */}
@@ -638,7 +642,7 @@ export function RoomScene2D({
 
       {/* hint */}
       <div style={{ position: 'absolute', bottom: 74, left: 0, right: 0, textAlign: 'center', fontFamily: '"Nunito", sans-serif', fontSize: 9, color: 'rgba(80,60,40,0.32)', letterSpacing: 0.4, fontWeight: 600, pointerEvents: 'none' }}>
-        tap blobs to customize · 🌙 to sleep · drag items to move
+        drag blobs &amp; items · tap blob to customize · 🌙 to sleep
       </div>
     </div>
   );

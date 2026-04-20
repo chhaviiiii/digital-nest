@@ -78,6 +78,11 @@ export default function App() {
     updateRoom({ shopItems: room.shopItems.map(i => i.id === itemId ? { ...i, pos } : i) });
   };
 
+  const moveBlob = (which, pos) => {
+    if (which === 'a') updateRoom({ avatarA: { ...room.avatarA, pos } });
+    else               updateRoom({ avatarB: { ...room.avatarB, pos } });
+  };
+
   const toggleSleep = (which) => {
     if (which === 'a') updateRoom({ sleepA: !room.sleepA });
     else               updateRoom({ sleepB: !room.sleepB });
@@ -134,6 +139,7 @@ export default function App() {
               onNoteClick={() => setScreen('note')}
               onCatColorChange={idx => updateRoom({ catColorIdx: idx })}
               onItemMove={moveItem}
+              onBlobMove={moveBlob}
               onToggleSleep={toggleSleep}
               onPing={sendPing}
             />
