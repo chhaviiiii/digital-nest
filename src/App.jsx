@@ -91,8 +91,6 @@ export default function App() {
     else               updateRoom({ sleepB: !room.sleepB });
   };
 
-  // ── ping ─────────────────────────────────────────────────────
-  const sendPing = (msg) => updateRoom({ ping: { ts: Date.now(), msg: msg || '💕' } });
 
   // ── room meta ────────────────────────────────────────────────
   const setRoomName = (name) => updateRoom({ roomName: name });
@@ -132,7 +130,6 @@ export default function App() {
           noteText={(room.notes?.[0]?.text) || room.note || ''}
           sleepA={room.sleepA ?? false}
           sleepB={room.sleepB ?? false}
-          ping={room.ping ?? null}
           streak={room.streak ?? 0}
           nextDate={room.nextDate ?? null}
           roomName={room.roomName ?? ''}
@@ -144,7 +141,6 @@ export default function App() {
           onItemMove={moveItem}
           onBlobMove={moveBlob}
           onToggleSleep={toggleSleep}
-          onPing={sendPing}
           onRoomNameChange={setRoomName}
         />
       )}

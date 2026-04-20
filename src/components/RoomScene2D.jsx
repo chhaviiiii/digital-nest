@@ -1,5 +1,5 @@
 import React from 'react';
-import { MOODS, CAT_COLORS, PING_MESSAGES, FURNITURE_COLORS } from '../constants.js';
+import { MOODS, CAT_COLORS, FURNITURE_COLORS } from '../constants.js';
 
 const DRAG_THRESHOLD = 6;
 
@@ -105,7 +105,6 @@ export function BlobAvatar({
   bouncing   = false,
   floatAnim  = 'blobFloat',
   sleeping   = false,
-  pinged     = false,
   accessory  = 'none',
 }) {
   return (
@@ -116,9 +115,6 @@ export function BlobAvatar({
             <span key={i} style={{ display: 'block', fontFamily: '"Nunito",sans-serif', fontWeight: 900, fontSize: 7 + i * 3, color: 'oklch(55% 0.08 250)', opacity: 0, animation: `zzzFloat 2.2s ease-in-out ${i * 0.65}s infinite`, lineHeight: 1 }}>{z}</span>
           ))}
         </div>
-      )}
-      {pinged && (
-        <div style={{ position: 'absolute', top: -18, left: '50%', transform: 'translateX(-50%)', fontSize: 18, animation: 'pingHeart 1.2s ease-out forwards', pointerEvents: 'none', zIndex: 10 }}>💕</div>
       )}
       <div style={{
         animation: bouncing
@@ -435,11 +431,11 @@ function FairyLights({ mood }) {
 export function RoomScene2D({
   mood = 'golden', wallColor, floorColor, accentColor,
   avatarA, avatarB, shopItems = [], coins = 0, catColorIdx = 0, noteText,
-  sleepA = false, sleepB = false, ping = null,
+  sleepA = false, sleepB = false,
   streak = 0, nextDate = null, roomName = '',
   onMoodChange, onAvatarTap, onNoteClick,
   onCatColorChange, onItemMove, onItemColor, onBlobMove, onToggleSleep,
-  onPing, onRoomNameChange,
+  onRoomNameChange,
 }) {
   const wc = wallColor  || 'oklch(93% 0.022 55)';
   const fc = floorColor || 'oklch(65% 0.08 54)';
@@ -448,9 +444,6 @@ export function RoomScene2D({
   const [bouncingA, setBouncingA] = React.useState(false);
   const [bouncingB, setBouncingB] = React.useState(false);
   const [catWiggling,    setCatWiggling]    = React.useState(false);
-  const [showPing,       setShowPing]       = React.useState(false);
-  const [pingMsg,        setPingMsg]        = React.useState('');
-  const [showPingPicker, setShowPingPicker] = React.useState(false);
   const [furniturePicker, setFurniturePicker] = React.useState(null); // 'bed'|'rug'|'nightstand'
 
   // room name inline edit
@@ -459,14 +452,6 @@ export function RoomScene2D({
   React.useEffect(() => { setNameDraft(roomName); }, [roomName]);
   const commitName = () => { setEditingName(false); if (nameDraft.trim()) onRoomNameChange?.(nameDraft.trim()); };
 
-  // ping hearts auto-clear
-  React.useEffect(() => {
-    if (!ping?.ts) return;
-    setPingMsg(ping.msg || '💕');
-    setShowPing(true);
-    const t = setTimeout(() => setShowPing(false), 4500);
-    return () => clearTimeout(t);
-  }, [ping?.ts]);
 
   const roomRef = React.useRef(null);
 
@@ -581,7 +566,7 @@ export function RoomScene2D({
       {/* ── Blob A — draggable, always in front of decor ── */}
       <DraggableDecor itemId="blobA" pos={avatarA?.pos ?? {x:18,y:66}} onMove={(_,pos) => onBlobMove?.('a',pos)} onTap={() => tapBlob('a')} roomRef={roomRef} zBase={60}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-          <BlobAvatar bodyColor={avatarA?.bodyColor} blushColor={avatarA?.blushColor} size={64} name={avatarA?.name} bouncing={bouncingA} floatAnim="blobFloat" sleeping={sleepA} pinged={showPing} accessory={avatarA?.accessory} />
+          <BlobAvatar bodyColor={avatarA?.bodyColor} blushColor={avatarA?.blushColor} size={64} name={avatarA?.name} bouncing={bouncingA} floatAnim="blobFloat" sleeping={sleepA} accessory={avatarA?.accessory} />
           <div onPointerDown={e => e.stopPropagation()} onClick={() => onToggleSleep?.('a')}
             style={{ background: sleepA?'rgba(0,0,0,0.12)':'rgba(255,255,255,0.82)', backdropFilter:'blur(6px)', borderRadius:14, padding:'4px 8px', fontSize:12, cursor:'pointer', boxShadow:'0 1px 5px rgba(0,0,0,0.10)', userSelect:'none', lineHeight:1 }}>
             {sleepA ? '☀️' : '🌙'}
@@ -592,7 +577,7 @@ export function RoomScene2D({
       {/* ── Blob B — draggable, always in front of decor ── */}
       <DraggableDecor itemId="blobB" pos={avatarB?.pos ?? {x:55,y:66}} onMove={(_,pos) => onBlobMove?.('b',pos)} onTap={() => tapBlob('b')} roomRef={roomRef} zBase={60}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-          <BlobAvatar bodyColor={avatarB?.bodyColor} blushColor={avatarB?.blushColor} size={64} name={avatarB?.name} flip bouncing={bouncingB} floatAnim="blobFloatB" sleeping={sleepB} pinged={showPing} accessory={avatarB?.accessory} />
+          <BlobAvatar bodyColor={avatarB?.bodyColor} blushColor={avatarB?.blushColor} size={64} name={avatarB?.name} flip bouncing={bouncingB} floatAnim="blobFloatB" sleeping={sleepB} accessory={avatarB?.accessory} />
           <div onPointerDown={e => e.stopPropagation()} onClick={() => onToggleSleep?.('b')}
             style={{ background: sleepB?'rgba(0,0,0,0.12)':'rgba(255,255,255,0.82)', backdropFilter:'blur(6px)', borderRadius:14, padding:'4px 8px', fontSize:12, cursor:'pointer', boxShadow:'0 1px 5px rgba(0,0,0,0.10)', userSelect:'none', lineHeight:1 }}>
             {sleepB ? '☀️' : '🌙'}
@@ -623,37 +608,6 @@ export function RoomScene2D({
         </div>
       )}
 
-      {/* ── Ping message popover ── */}
-      {showPingPicker && (
-        <div onClick={e => e.stopPropagation()}
-          style={{ position: 'absolute', bottom: 132, left: '50%', transform: 'translateX(-50%)', background: 'rgba(255,255,255,0.97)', borderRadius: 18, padding: '10px 12px', boxShadow: '0 6px 24px rgba(0,0,0,0.14)', zIndex: 60, minWidth: 220 }}>
-          <div style={{ fontFamily: '"Nunito",sans-serif', fontSize: 10, fontWeight: 700, color: 'oklch(50% 0.05 50)', textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 8, textAlign: 'center' }}>send a ping</div>
-          {PING_MESSAGES.map(({ msg, emoji }) => (
-            <div key={msg} onClick={() => { onPing?.(msg); setShowPingPicker(false); }}
-              style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 10, cursor: 'pointer', fontFamily: '"Nunito",sans-serif', fontSize: 13, fontWeight: 600, color: 'oklch(30% 0.05 50)', marginBottom: 2 }}
-              onPointerEnter={e => e.currentTarget.style.background = 'oklch(95% 0.018 55)'}
-              onPointerLeave={e => e.currentTarget.style.background = 'transparent'}>
-              <span style={{ fontSize: 16 }}>{emoji}</span>{msg}
-            </div>
-          ))}
-          <div onClick={() => setShowPingPicker(false)} style={{ textAlign: 'center', fontFamily: '"Nunito",sans-serif', fontSize: 11, color: 'oklch(60% 0.04 50)', cursor: 'pointer', marginTop: 6 }}>cancel</div>
-        </div>
-      )}
-
-      {/* ── Ping button ── */}
-      <div style={{ position: 'absolute', bottom: 88, left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, zIndex: 10 }}>
-        {showPing && pingMsg && (
-          <div style={{ fontFamily: '"Nunito",sans-serif', fontSize: 11, fontWeight: 700, color: 'oklch(44% 0.09 50)', animation: 'pingHeart 4s ease-out forwards', pointerEvents: 'none', whiteSpace: 'nowrap', textAlign: 'center', maxWidth: 200 }}>
-            {pingMsg}
-          </div>
-        )}
-        <div style={{ fontFamily: '"Nunito",sans-serif', fontSize: 9, color: 'rgba(80,60,40,0.4)', fontWeight: 700, letterSpacing: 0.3 }}>ping!</div>
-        <div onClick={e => { e.stopPropagation(); setShowPingPicker(p => !p); }}
-          style={{ width: 36, height: 36, borderRadius: '50%', background: showPingPicker ? 'oklch(88% 0.06 50)' : 'rgba(255,255,255,0.9)', backdropFilter: 'blur(8px)', boxShadow: '0 2px 10px rgba(0,0,0,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, cursor: 'pointer', userSelect: 'none', transition: 'background 0.15s, transform 0.12s' }}
-          onPointerDown={e => e.currentTarget.style.transform = 'scale(0.85)'}
-          onPointerUp={e   => e.currentTarget.style.transform = 'scale(1)'}
-        >💌</div>
-      </div>
 
       {/* coin + streak pill */}
       <div style={{ position: 'absolute', top: 14, right: 14, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 5, zIndex: 5 }}>

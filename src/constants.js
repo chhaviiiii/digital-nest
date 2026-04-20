@@ -66,14 +66,6 @@ export const FURNITURE_COLORS = [
   'oklch(68% 0.07 78)',   // golden straw
 ];
 
-export const PING_MESSAGES = [
-  { msg: 'miss you 💕',         emoji: '💕' },
-  { msg: 'thinking of you 🌸', emoji: '🌸' },
-  { msg: 'come online! 📱',    emoji: '📱' },
-  { msg: 'good morning ☀️',    emoji: '☀️' },
-  { msg: 'goodnight 🌙',       emoji: '🌙' },
-  { msg: 'love you 💖',        emoji: '💖' },
-];
 
 export const DEFAULT_TASKS = [
   { id: 1, text: 'Good morning text',    coins: 3,  done: false },
@@ -126,7 +118,6 @@ export const DEFAULT_ROOM = {
   avatarB:        { bodyColor: 'oklch(78% 0.08 20)', blushColor: 'oklch(80% 0.09 45)', name: 'Quinn', pos: { x: 55, y: 66 }, accessory: 'none' },
   sleepA:         false,
   sleepB:         false,
-  ping:           null,
   streak:         0,
   lastActive:     null,
   completedTasks: [],
