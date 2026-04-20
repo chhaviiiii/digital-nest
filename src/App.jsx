@@ -1,5 +1,10 @@
 import React from 'react';
 import { IOSDevice, IOSStatusBar } from './components/IOSFrame.jsx';
+
+// True when running as installed PWA (added to home screen)
+const IS_PWA =
+  window.navigator.standalone === true ||
+  window.matchMedia('(display-mode: standalone)').matches;
 import { RoomScene2D } from './components/RoomScene2D.jsx';
 import { BottomNav } from './components/BottomNav.jsx';
 import { TasksScreen } from './screens/TasksScreen.jsx';
@@ -11,8 +16,11 @@ import { P } from './constants.js';
 import { useRoom, getLastRoomCode, saveRoomCode } from './hooks/useRoom.js';
 
 function ScreenHeader({ title }) {
+  // In PWA mode the outer container already clears the status bar via env(safe-area-inset-top),
+  // so we only need a small decorative top padding here.
+  const topPad = IS_PWA ? 18 : 68;
   return (
-    <div style={{ padding: '68px 22px 16px', background: P.white, borderBottom: '0.5px solid rgba(0,0,0,0.06)' }}>
+    <div style={{ padding: `${topPad}px 22px 16px`, background: P.white, borderBottom: '0.5px solid rgba(0,0,0,0.06)' }}>
       <div style={{ fontFamily: '"DM Serif Display", serif', fontStyle: 'italic', fontSize: 30, color: P.ink, letterSpacing: -0.5, lineHeight: 1 }}>{title}</div>
     </div>
   );
@@ -82,7 +90,135 @@ export default function App() {
   // ── note (now includes photo) ────────────────────────────────
   const saveNote = ({ note, notePhoto }) => updateRoom({ note, notePhoto: notePhoto ?? room.notePhoto ?? null });
 
+  // ── shared screen content ────────────────────────────────────
+  const screens = (
+    <>
+      {/* ROOM */}
+      {screen === 'room' && (
+        <RoomScene2D
+          mood={room.mood}
+          wallColor={room.wallColor}
+          floorColor={room.floorColor}
+          accentColor={room.accentColor}
+          avatarA={room.avatarA}
+          avatarB={room.avatarB}
+          shopItems={room.shopItems}
+          coins={room.coins}
+          catColorIdx={room.catColorIdx ?? 0}
+          noteText={room.note}
+          sleepA={room.sleepA ?? false}
+          sleepB={room.sleepB ?? false}
+          ping={room.ping ?? null}
+          streak={room.streak ?? 0}
+          nextDate={room.nextDate ?? null}
+          roomName={room.roomName ?? ''}
+          onMoodChange={mood => updateRoom({ mood })}
+          onAvatarTap={() => setScreen('customize')}
+          onNoteClick={() => setScreen('note')}
+          onCatColorChange={idx => updateRoom({ catColorIdx: idx })}
+          onItemMove={moveItem}
+          onBlobMove={moveBlob}
+          onToggleSleep={toggleSleep}
+          onPing={sendPing}
+          onRoomNameChange={setRoomName}
+        />
+      )}
+
+      {/* TASKS */}
+      {screen === 'tasks' && (
+        <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: P.bg }}>
+          <ScreenHeader title="our tasks" />
+          <div style={{ flex: 1, overflow: 'auto', WebkitOverflowScrolling: 'touch' }}>
+            <TasksScreen
+              tasks={room.tasks}
+              coins={room.coins}
+              completedTasks={room.completedTasks ?? []}
+              onComplete={completeTask}
+              onAdd={addTask}
+              onEdit={editTask}
+              onRemove={removeTask}
+              onCoinsEdit={c => updateRoom({ coins: c })}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* SHOP */}
+      {screen === 'shop' && (
+        <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: P.bg }}>
+          <ScreenHeader title="nest shop" />
+          <div style={{ flex: 1, overflow: 'auto', WebkitOverflowScrolling: 'touch' }}>
+            <ShopScreen coins={room.coins} items={room.shopItems} onBuy={buyItem} onTogglePlaced={togglePlaced} />
+          </div>
+        </div>
+      )}
+
+      {/* NOTE */}
+      {screen === 'note' && (
+        <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: P.bg }}>
+          <ScreenHeader title="sticky note" />
+          <div style={{ flex: 1, overflow: 'auto', WebkitOverflowScrolling: 'touch' }}>
+            <NoteScreen
+              note={room.note}
+              notePhoto={room.notePhoto ?? null}
+              onSave={saveNote}
+              avatarA={room.avatarA}
+              avatarB={room.avatarB}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* CUSTOMIZE */}
+      {screen === 'customize' && (
+        <CustomizeScreen
+          room={room}
+          onUpdate={updateRoom}
+          onLeaveRoom={leaveRoom}
+          roomCode={roomCode}
+          connStatus={status}
+        />
+      )}
+    </>
+  );
+
   // ── render ───────────────────────────────────────────────────
+
+  // ── PWA / native full-screen layout ─────────────────────────
+  if (IS_PWA) {
+    if (!roomCode) {
+      return (
+        <div style={{
+          position: 'fixed', inset: 0,
+          display: 'flex', flexDirection: 'column',
+          paddingTop: 'env(safe-area-inset-top)',
+          background: P.bg, overflow: 'hidden',
+        }}>
+          <OnboardingScreen onEnter={enterRoom} />
+        </div>
+      );
+    }
+    return (
+      <div style={{
+        position: 'fixed', inset: 0,
+        display: 'flex', flexDirection: 'column',
+        /* push content below the real phone status bar */
+        paddingTop: 'env(safe-area-inset-top)',
+        background: P.bg, overflow: 'hidden',
+      }}>
+        {/* scrollable screen area */}
+        <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+          {screens}
+        </div>
+        {/* bottom nav — clears the home indicator on notched iPhones */}
+        <div style={{ flexShrink: 0, paddingBottom: 'env(safe-area-inset-bottom)' }}>
+          <BottomNav active={screen} onChange={setScreen} />
+        </div>
+      </div>
+    );
+  }
+
+  // ── Desktop / browser preview — keep the fake iPhone frame ───
   if (!roomCode) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', padding: 40 }}>
@@ -99,101 +235,12 @@ export default function App() {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', padding: 40 }}>
       <IOSDevice width={393} height={852}>
-
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 20 }}>
           <IOSStatusBar dark={screen === 'room' && room.mood === 'night'} />
         </div>
-
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 82, overflow: 'hidden' }}>
-
-          {/* ROOM */}
-          {screen === 'room' && (
-            <RoomScene2D
-              mood={room.mood}
-              wallColor={room.wallColor}
-              floorColor={room.floorColor}
-              accentColor={room.accentColor}
-              avatarA={room.avatarA}
-              avatarB={room.avatarB}
-              shopItems={room.shopItems}
-              coins={room.coins}
-              catColorIdx={room.catColorIdx ?? 0}
-              noteText={room.note}
-              sleepA={room.sleepA ?? false}
-              sleepB={room.sleepB ?? false}
-              ping={room.ping ?? null}
-              streak={room.streak ?? 0}
-              nextDate={room.nextDate ?? null}
-              roomName={room.roomName ?? ''}
-              onMoodChange={mood => updateRoom({ mood })}
-              onAvatarTap={() => setScreen('customize')}
-              onNoteClick={() => setScreen('note')}
-              onCatColorChange={idx => updateRoom({ catColorIdx: idx })}
-              onItemMove={moveItem}
-              onBlobMove={moveBlob}
-              onToggleSleep={toggleSleep}
-              onPing={sendPing}
-              onRoomNameChange={setRoomName}
-            />
-          )}
-
-          {/* TASKS */}
-          {screen === 'tasks' && (
-            <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: P.bg }}>
-              <ScreenHeader title="our tasks" />
-              <div style={{ flex: 1, overflow: 'auto' }}>
-                <TasksScreen
-                  tasks={room.tasks}
-                  coins={room.coins}
-                  completedTasks={room.completedTasks ?? []}
-                  onComplete={completeTask}
-                  onAdd={addTask}
-                  onEdit={editTask}
-                  onRemove={removeTask}
-                  onCoinsEdit={c => updateRoom({ coins: c })}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* SHOP */}
-          {screen === 'shop' && (
-            <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: P.bg }}>
-              <ScreenHeader title="nest shop" />
-              <div style={{ flex: 1, overflow: 'auto' }}>
-                <ShopScreen coins={room.coins} items={room.shopItems} onBuy={buyItem} onTogglePlaced={togglePlaced} />
-              </div>
-            </div>
-          )}
-
-          {/* NOTE */}
-          {screen === 'note' && (
-            <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: P.bg }}>
-              <ScreenHeader title="sticky note" />
-              <div style={{ flex: 1, overflow: 'auto' }}>
-                <NoteScreen
-                  note={room.note}
-                  notePhoto={room.notePhoto ?? null}
-                  onSave={saveNote}
-                  avatarA={room.avatarA}
-                  avatarB={room.avatarB}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* CUSTOMIZE */}
-          {screen === 'customize' && (
-            <CustomizeScreen
-              room={room}
-              onUpdate={updateRoom}
-              onLeaveRoom={leaveRoom}
-              roomCode={roomCode}
-              connStatus={status}
-            />
-          )}
+          {screens}
         </div>
-
         <BottomNav active={screen} onChange={setScreen} />
       </IOSDevice>
     </div>

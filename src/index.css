@@ -1,8 +1,31 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+html {
+  height: 100%;
+  /* prevent iOS rubber-band scroll on the root */
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 body {
-  min-height: 100vh;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  /* lock the body so only the app's scroll containers scroll */
+  position: fixed;
+  width: 100%;
   background: oklch(88% 0.025 52);
+  /* desktop centering */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* remove tap highlight flashes */
+  -webkit-tap-highlight-color: transparent;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
