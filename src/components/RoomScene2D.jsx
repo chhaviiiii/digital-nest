@@ -312,18 +312,66 @@ function BooksSVG() {
   );
 }
 function BedDecor({ accentColor }) {
-  const ac = accentColor || 'oklch(58% 0.11 42)';
+  const ac  = accentColor || 'oklch(58% 0.11 42)';
+  const wood      = 'oklch(46% 0.08 46)';
+  const woodLight = 'oklch(54% 0.09 49)';
+  const woodDark  = 'oklch(38% 0.06 44)';
   return (
     <div>
-      <svg width="118" height="82" viewBox="0 0 118 82">
-        <rect x="0" y="0"  width="118" height="30" rx="6" fill="oklch(50% 0.07 52)" />
-        <rect x="6" y="4"  width="106" height="22" rx="4" fill="oklch(56% 0.08 54)" />
-        <rect x="0" y="26" width="118" height="56" rx="4" fill="oklch(43% 0.06 50)" />
-        <rect x="4" y="30" width="110" height="48" rx="4" fill="oklch(94% 0.018 58)" />
-        <rect x="4" y="44" width="110" height="34" rx="4" fill={ac} opacity="0.85" />
-        <rect x="4" y="44" width="110" height="8"  rx="3" fill="white" opacity="0.3" />
-        <rect x="12" y="32" width="36" height="16" rx="8" fill="white" opacity="0.9" />
-        <rect x="56" y="32" width="36" height="16" rx="8" fill="white" opacity="0.9" />
+      <svg width="134" height="96" viewBox="0 0 134 96">
+
+        {/* ── Headboard ── */}
+        <rect x="0" y="0" width="134" height="34" rx="8" fill={wood}/>
+        <rect x="4" y="3" width="126" height="28" rx="6" fill={woodLight}/>
+        {/* arch carved into headboard */}
+        <path d="M18,28 Q67,7 116,28" fill="none" stroke="oklch(63% 0.08 52)" strokeWidth="2.5" strokeLinecap="round"/>
+        {/* tufting buttons */}
+        <circle cx="43" cy="17" r="2.4" fill={woodDark} opacity="0.75"/>
+        <circle cx="67" cy="13" r="2.4" fill={woodDark} opacity="0.75"/>
+        <circle cx="91" cy="17" r="2.4" fill={woodDark} opacity="0.75"/>
+
+        {/* ── Side rails ── */}
+        <rect x="0"   y="30" width="10" height="52" rx="3" fill={wood}/>
+        <rect x="2"   y="32" width="6"  height="48" rx="2" fill={woodLight}/>
+        <rect x="124" y="30" width="10" height="52" rx="3" fill={wood}/>
+        <rect x="126" y="32" width="6"  height="48" rx="2" fill={woodLight}/>
+
+        {/* ── Footboard ── */}
+        <rect x="0"  y="82" width="134" height="14" rx="5" fill={wood}/>
+        <rect x="4"  y="85" width="126" height="8"  rx="3" fill={woodLight}/>
+
+        {/* ── Mattress base ── */}
+        <rect x="10" y="30" width="114" height="54" rx="3" fill="oklch(97% 0.016 56)"/>
+
+        {/* ── Sheet fold at pillow line ── */}
+        <rect x="10" y="50" width="114" height="7" rx="2" fill="oklch(91% 0.025 58)" opacity="0.9"/>
+
+        {/* ── Duvet ── */}
+        <rect x="10" y="55" width="114" height="29" rx="6" fill={ac} opacity="0.92"/>
+        {/* puffer channels */}
+        <rect x="10" y="55" width="114" height="10" rx="5" fill="white" opacity="0.20"/>
+        <line x1="16" y1="65" x2="118" y2="65" stroke="white" strokeWidth="1.2" opacity="0.22"/>
+        <rect x="10" y="65" width="114" height="10" fill="white" opacity="0.07"/>
+        <line x1="16" y1="75" x2="118" y2="75" stroke="white" strokeWidth="1.2" opacity="0.15"/>
+        <rect x="10" y="75" width="114" height="9"  rx="5" fill={ac} opacity="0.88"/>
+        {/* duvet bottom shadow */}
+        <path d="M14,82 Q67,86 120,82" stroke={woodDark} strokeWidth="1.5" fill="none" opacity="0.14"/>
+
+        {/* ── Left pillow ── */}
+        <rect x="14" y="31" width="46" height="22" rx="11" fill="white"/>
+        {/* pillow top highlight */}
+        <rect x="17" y="33" width="40" height="9" rx="5" fill="white" opacity="0.55"/>
+        {/* pillow shadow at base */}
+        <ellipse cx="37" cy="52" rx="21" ry="3.5" fill="oklch(82% 0.04 55)" opacity="0.38"/>
+        {/* centre crease */}
+        <path d="M36,32 Q38,42 36,53" stroke="oklch(87% 0.03 55)" strokeWidth="1.5" fill="none" opacity="0.45"/>
+
+        {/* ── Right pillow ── */}
+        <rect x="74" y="31" width="46" height="22" rx="11" fill="white"/>
+        <rect x="77" y="33" width="40" height="9" rx="5" fill="white" opacity="0.55"/>
+        <ellipse cx="97" cy="52" rx="21" ry="3.5" fill="oklch(82% 0.04 55)" opacity="0.38"/>
+        <path d="M96,32 Q98,42 96,53" stroke="oklch(87% 0.03 55)" strokeWidth="1.5" fill="none" opacity="0.45"/>
+
       </svg>
     </div>
   );
