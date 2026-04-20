@@ -57,15 +57,24 @@ export const DEFAULT_SHOP = [
   { id: 'cactus', label: 'Cactus',       icon: '🌵', cost: 25,  owned: false, placed: false },
 ];
 
+export const CAT_COLORS = [
+  'oklch(64% 0.08 56)',   // sandy (default)
+  'oklch(58% 0.13 48)',   // ginger tabby
+  'oklch(54% 0.04 240)',  // grey
+  'oklch(26% 0.02 40)',   // midnight black
+  'oklch(88% 0.02 60)',   // cream
+];
+
 export const DEFAULT_ROOM = {
-  wallColor:   'oklch(93% 0.022 55)',
-  floorColor:  'oklch(65% 0.08 54)',
-  accentColor: 'oklch(58% 0.11 42)',
-  mood:        'golden',
-  coins:       240,
-  tasks:       DEFAULT_TASKS,
-  shopItems:   DEFAULT_SHOP,
-  note:        "can't wait to see you 🌙",
-  avatarA:     { bodyColor: 'oklch(60% 0.11 42)', blushColor: 'oklch(82% 0.09 20)', name: 'River' },
+  wallColor:    'oklch(93% 0.022 55)',
+  floorColor:   'oklch(65% 0.08 54)',
+  accentColor:  'oklch(58% 0.11 42)',
+  mood:         'golden',
+  coins:        240,
+  catColorIdx:  0,
+  tasks:        DEFAULT_TASKS,
+  shopItems:    DEFAULT_SHOP,
+  note:         "can't wait to see you 🌙",
+  avatarA:      { bodyColor: 'oklch(60% 0.11 42)', blushColor: 'oklch(82% 0.09 20)', name: 'River' },
   avatarB:     { bodyColor: 'oklch(78% 0.08 20)', blushColor: 'oklch(80% 0.09 45)', name: 'Quinn' },
 };

@@ -1,28 +1,36 @@
 import React from 'react';
-import { MOODS } from '../constants.js';
+import { MOODS, CAT_COLORS } from '../constants.js';
 
 // ── Blob avatar ──────────────────────────────────────────────
-export function BlobAvatar({ bodyColor = 'oklch(60% 0.11 42)', blushColor = 'oklch(82% 0.09 20)', size = 72, name = '', flip = false }) {
+export function BlobAvatar({ bodyColor = 'oklch(60% 0.11 42)', blushColor = 'oklch(82% 0.09 20)', size = 72, name = '', flip = false, bouncing = false, floatAnim = 'blobFloat' }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-      <svg width={size} height={size} viewBox="-40 -40 80 80" style={{ transform: flip ? 'scaleX(-1)' : 'none', overflow: 'visible' }}>
-        <path d="M0,-36 C22,-36 38,-18 38,2 C38,24 22,38 0,38 C-22,38 -38,24 -38,2 C-38,-18 -22,-36 0,-36Z" fill={bodyColor} />
-        <ellipse cx="-19" cy="9" rx="8" ry="5.5" fill={blushColor} opacity="0.55" />
-        <ellipse cx="19"  cy="9" rx="8" ry="5.5" fill={blushColor} opacity="0.55" />
-        <circle cx="-12" cy="-4" r="7" fill="white" />
-        <circle cx="12"  cy="-4" r="7" fill="white" />
-        <circle cx="-11" cy="-3" r="4" fill="oklch(18% 0.03 40)" />
-        <circle cx="13"  cy="-3" r="4" fill="oklch(18% 0.03 40)" />
-        <circle cx="-9"  cy="-5" r="1.8" fill="white" />
-        <circle cx="15"  cy="-5" r="1.8" fill="white" />
-        <path d="M-9,14 Q0,20 9,14" stroke="oklch(30% 0.04 40)" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.35" />
-      </svg>
+      <div style={{
+        animation: bouncing
+          ? 'blobBounce 0.72s cubic-bezier(0.36,0.07,0.19,0.97) forwards'
+          : `${floatAnim} ${floatAnim === 'blobFloat' ? '3.2s' : '3.8s'} ease-in-out infinite`,
+        transformOrigin: 'bottom center',
+        willChange: 'transform',
+      }}>
+        <svg width={size} height={size} viewBox="-40 -40 80 80" style={{ transform: flip ? 'scaleX(-1)' : 'none', overflow: 'visible', display: 'block' }}>
+          <path d="M0,-36 C22,-36 38,-18 38,2 C38,24 22,38 0,38 C-22,38 -38,24 -38,2 C-38,-18 -22,-36 0,-36Z" fill={bodyColor} />
+          <ellipse cx="-19" cy="9" rx="8" ry="5.5" fill={blushColor} opacity="0.55" />
+          <ellipse cx="19"  cy="9" rx="8" ry="5.5" fill={blushColor} opacity="0.55" />
+          <circle cx="-12" cy="-4" r="7" fill="white" />
+          <circle cx="12"  cy="-4" r="7" fill="white" />
+          <circle cx="-11" cy="-3" r="4" fill="oklch(18% 0.03 40)" />
+          <circle cx="13"  cy="-3" r="4" fill="oklch(18% 0.03 40)" />
+          <circle cx="-9"  cy="-5" r="1.8" fill="white" />
+          <circle cx="15"  cy="-5" r="1.8" fill="white" />
+          <path d="M-9,14 Q0,20 9,14" stroke="oklch(30% 0.04 40)" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.35" />
+        </svg>
+      </div>
       {name && <div style={{ fontFamily: '"Nunito", sans-serif', fontSize: 10, fontWeight: 700, color: 'oklch(40% 0.06 50)', letterSpacing: 0.3 }}>{name}</div>}
     </div>
   );
 }
 
-// ── Weather sky inside window ────────────────────────────────
+// ── Weather sky ──────────────────────────────────────────────
 function SkyView({ mood, width, height }) {
   const m = MOODS[mood] || MOODS.golden;
   return (
@@ -64,7 +72,7 @@ function SkyView({ mood, width, height }) {
   );
 }
 
-// ── Window frame ─────────────────────────────────────────────
+// ── Window ───────────────────────────────────────────────────
 function RoomWindow({ mood, x, y, w = 200, h = 170 }) {
   const frame = 'oklch(56% 0.07 56)';
   const frameLight = 'oklch(64% 0.08 60)';
@@ -79,7 +87,7 @@ function RoomWindow({ mood, x, y, w = 200, h = 170 }) {
   );
 }
 
-// ── Decor components ─────────────────────────────────────────
+// ── Decor ────────────────────────────────────────────────────
 function PlantDecor({ x, bottom }) {
   return (
     <div style={{ position: 'absolute', left: x, bottom, pointerEvents: 'none' }}>
@@ -129,28 +137,45 @@ function LampDecor({ right, bottom, glowing = false }) {
   );
 }
 
-function CatDecor({ left, bottom }) {
-  const c = 'oklch(64% 0.08 56)';
+function CatDecor({ left, bottom, bodyColor, wiggling, onClick }) {
+  const c = bodyColor || CAT_COLORS[0];
+  // derive a slightly lighter inner-ear color
+  const innerEar = 'oklch(83% 0.07 22)';
   return (
-    <div style={{ position: 'absolute', left, bottom, pointerEvents: 'none' }}>
+    <div
+      onClick={onClick}
+      style={{ position: 'absolute', left, bottom, cursor: 'pointer', zIndex: 4,
+        animation: wiggling ? 'catWiggle 0.55s cubic-bezier(0.36,0.07,0.19,0.97) forwards' : 'none',
+        transformOrigin: 'bottom center',
+        willChange: 'transform',
+      }}>
       <svg width="50" height="42" viewBox="0 0 50 42">
         <ellipse cx="25" cy="30" rx="21" ry="13" fill={c} />
         <ellipse cx="25" cy="18" rx="14" ry="13" fill={c} />
         <polygon points="13,11 9,2 18,9" fill={c} />
         <polygon points="37,11 41,2 32,9" fill={c} />
-        <polygon points="14,10 11,3 18,9" fill="oklch(83% 0.07 22)" />
-        <polygon points="36,10 39,3 32,9" fill="oklch(83% 0.07 22)" />
+        <polygon points="14,10 11,3 18,9" fill={innerEar} />
+        <polygon points="36,10 39,3 32,9" fill={innerEar} />
         <ellipse cx="20" cy="18" rx="3.8" ry="4.2" fill="oklch(13% 0.03 40)" />
         <ellipse cx="30" cy="18" rx="3.8" ry="4.2" fill="oklch(13% 0.03 40)" />
         <circle cx="21" cy="16.5" r="1.4" fill="white" />
         <circle cx="31" cy="16.5" r="1.4" fill="white" />
         <polygon points="25,22 23,24.5 27,24.5" fill="oklch(70% 0.09 18)" />
-        <line x1="8" y1="21" x2="19" y2="22" stroke="rgba(0,0,0,0.16)" strokeWidth="0.9" />
-        <line x1="8" y1="24" x2="19" y2="23" stroke="rgba(0,0,0,0.16)" strokeWidth="0.9" />
+        <line x1="8"  y1="21" x2="19" y2="22" stroke="rgba(0,0,0,0.16)" strokeWidth="0.9" />
+        <line x1="8"  y1="24" x2="19" y2="23" stroke="rgba(0,0,0,0.16)" strokeWidth="0.9" />
         <line x1="42" y1="21" x2="31" y2="22" stroke="rgba(0,0,0,0.16)" strokeWidth="0.9" />
         <line x1="42" y1="24" x2="31" y2="23" stroke="rgba(0,0,0,0.16)" strokeWidth="0.9" />
         <path d="M44,34 Q54,24 48,16 Q46,26 42,30" fill={c} />
       </svg>
+      {/* color-name tooltip that pops up briefly */}
+      {wiggling && (
+        <div style={{ position: 'absolute', bottom: '110%', left: '50%', transform: 'translateX(-50%)', background: 'rgba(0,0,0,0.6)', color: 'white', borderRadius: 8, padding: '3px 8px', fontFamily: '"Nunito", sans-serif', fontSize: 10, fontWeight: 700, whiteSpace: 'nowrap', animation: 'catFlash 0.7s ease-out forwards', pointerEvents: 'none' }}>
+          {CAT_COLORS.findIndex(col => col === c) === 0 ? 'Sandy' :
+           CAT_COLORS.findIndex(col => col === c) === 1 ? 'Ginger' :
+           CAT_COLORS.findIndex(col => col === c) === 2 ? 'Grey' :
+           CAT_COLORS.findIndex(col => col === c) === 3 ? 'Midnight' : 'Cream'}
+        </div>
+      )}
     </div>
   );
 }
@@ -160,17 +185,12 @@ function BedDecor({ right, bottom, accentColor }) {
   return (
     <div style={{ position: 'absolute', right, bottom, pointerEvents: 'none' }}>
       <svg width="118" height="82" viewBox="0 0 118 82">
-        {/* headboard */}
         <rect x="0" y="0" width="118" height="30" rx="6" fill="oklch(50% 0.07 52)" />
         <rect x="6" y="4" width="106" height="22" rx="4" fill="oklch(56% 0.08 54)" />
-        {/* bed frame */}
         <rect x="0" y="26" width="118" height="56" rx="4" fill="oklch(43% 0.06 50)" />
-        {/* mattress */}
         <rect x="4" y="30" width="110" height="48" rx="4" fill="oklch(94% 0.018 58)" />
-        {/* blanket */}
         <rect x="4" y="44" width="110" height="34" rx="4" fill={ac} opacity="0.85" />
         <rect x="4" y="44" width="110" height="8" rx="3" fill="white" opacity="0.3" />
-        {/* pillows */}
         <rect x="12" y="32" width="36" height="16" rx="8" fill="white" opacity="0.9" />
         <rect x="56" y="32" width="36" height="16" rx="8" fill="white" opacity="0.9" />
       </svg>
@@ -185,12 +205,11 @@ function CandlesDecor({ left, bottom }) {
         <rect x="2"  y="14" width="10" height="20" rx="3" fill="oklch(90% 0.04 55)" />
         <rect x="18" y="8"  width="10" height="26" rx="3" fill="oklch(88% 0.06 58)" />
         <rect x="34" y="18" width="10" height="16" rx="3" fill="oklch(90% 0.04 55)" />
-        <ellipse cx="7"  cy="14" rx="5" ry="2.5" fill="oklch(82% 0.04 56)" />
-        <ellipse cx="23" cy="8"  rx="5" ry="2.5" fill="oklch(84% 0.05 56)" />
-        <ellipse cx="39" cy="18" rx="5" ry="2.5" fill="oklch(82% 0.04 56)" />
-        {/* flames */}
-        <ellipse cx="7"  cy="12" rx="2" ry="3.5" fill="oklch(85% 0.18 72)" opacity="0.9" />
-        <ellipse cx="23" cy="5.5" rx="2" ry="3.5" fill="oklch(85% 0.18 72)" opacity="0.9" />
+        <ellipse cx="7"  cy="14"   rx="5" ry="2.5" fill="oklch(82% 0.04 56)" />
+        <ellipse cx="23" cy="8"    rx="5" ry="2.5" fill="oklch(84% 0.05 56)" />
+        <ellipse cx="39" cy="18"   rx="5" ry="2.5" fill="oklch(82% 0.04 56)" />
+        <ellipse cx="7"  cy="12"   rx="2" ry="3.5" fill="oklch(85% 0.18 72)" opacity="0.9" />
+        <ellipse cx="23" cy="5.5"  rx="2" ry="3.5" fill="oklch(85% 0.18 72)" opacity="0.9" />
         <ellipse cx="39" cy="15.5" rx="2" ry="3.5" fill="oklch(85% 0.18 72)" opacity="0.9" />
       </svg>
     </div>
@@ -215,9 +234,8 @@ function FairyLights({ mood }) {
     <div style={{ position: 'absolute', top: 58, left: 0, right: 0, height: 24, pointerEvents: 'none', zIndex: 4 }}>
       <svg width="100%" height="24" viewBox="0 0 393 24" preserveAspectRatio="none">
         <path d={`M 0 8 ${Array.from({ length: count }, (_, i) => {
-          const x1 = (i / count) * 393;
           const x2 = ((i + 0.5) / count) * 393;
-          const x3 = ((i + 1) / count) * 393;
+          const x3 = ((i + 1)   / count) * 393;
           return `Q ${x2} 18 ${x3} 8`;
         }).join(' ')}`} fill="none" stroke="oklch(70% 0.08 50)" strokeWidth="1" opacity="0.5" />
         {Array.from({ length: count }, (_, i) => {
@@ -229,11 +247,30 @@ function FairyLights({ mood }) {
   );
 }
 
-// ── Main room scene ───────────────────────────────────────────
-export function RoomScene2D({ mood = 'golden', wallColor, floorColor, accentColor, avatarA, avatarB, shopItems = [], coins = 0, noteText, onMoodChange, onAvatarTap, onNoteClick }) {
+// ── Main scene ───────────────────────────────────────────────
+export function RoomScene2D({ mood = 'golden', wallColor, floorColor, accentColor, avatarA, avatarB, shopItems = [], coins = 0, catColorIdx = 0, noteText, onMoodChange, onAvatarTap, onNoteClick, onCatColorChange }) {
   const wc = wallColor  || 'oklch(93% 0.022 55)';
   const fc = floorColor || 'oklch(65% 0.08 54)';
   const m  = MOODS[mood] || MOODS.golden;
+
+  // blob bounce state
+  const [bouncingA, setBouncingA] = React.useState(false);
+  const [bouncingB, setBouncingB] = React.useState(false);
+  // cat wiggle state
+  const [catWiggle, setCatWiggle] = React.useState(false);
+
+  const tapBlob = (which) => {
+    if (which === 'a') { setBouncingA(true); setTimeout(() => setBouncingA(false), 720); }
+    else               { setBouncingB(true); setTimeout(() => setBouncingB(false), 720); }
+    setTimeout(() => onAvatarTap?.(which), 120); // open customizer after bounce starts
+  };
+
+  const tapCat = () => {
+    setCatWiggle(true);
+    setTimeout(() => setCatWiggle(false), 560);
+    const next = ((catColorIdx ?? 0) + 1) % CAT_COLORS.length;
+    onCatColorChange?.(next);
+  };
 
   const placed = (id) => shopItems.find(i => i.id === id)?.placed;
 
@@ -253,46 +290,33 @@ export function RoomScene2D({ mood = 'golden', wallColor, floorColor, accentColo
         ))}
       </div>
 
-      {/* wall→floor shadow */}
       <div style={{ position: 'absolute', top: '64%', left: 0, right: 0, height: 26, background: 'linear-gradient(to bottom, rgba(0,0,0,0.09), transparent)', pointerEvents: 'none' }} />
 
-      {/* fairy lights */}
       {placed('lights') && <FairyLights mood={mood} />}
 
-      {/* window – centered in upper wall */}
       <RoomWindow mood={mood} x={97} y={58} w={200} h={170} />
 
-      {/* window light spill */}
       <div style={{ position: 'absolute', bottom: '36%', left: '18%', width: '64%', height: 70, background: mood === 'night' ? 'rgba(255,210,130,0.09)' : 'rgba(255,228,148,0.12)', filter: 'blur(20px)', pointerEvents: 'none' }} />
 
-      {/* night lamp glow on wall */}
       {mood === 'night' && (
         <div style={{ position: 'absolute', bottom: '34%', right: 14, width: 100, height: 130, background: 'radial-gradient(ellipse at 80% 55%, oklch(92% 0.14 76), transparent 70%)', opacity: 0.38, pointerEvents: 'none' }} />
       )}
 
-      {/* bed (right side, against wall) */}
       <BedDecor right={8} bottom={200} accentColor={accentColor} />
 
-      {/* sticky note on wall (near window, top right) */}
-      <div
-        onClick={onNoteClick}
+      {/* sticky note on wall */}
+      <div onClick={onNoteClick}
         style={{ position: 'absolute', top: 72, right: 14, width: 64, height: 64, background: 'oklch(95% 0.09 86)', borderRadius: 5, boxShadow: '2px 3px 10px rgba(0,0,0,0.14)', transform: 'rotate(3deg)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 7, cursor: 'pointer', zIndex: 3 }}>
         <div style={{ fontFamily: '"Nunito", sans-serif', fontSize: 8, color: 'oklch(38% 0.08 65)', lineHeight: 1.45, textAlign: 'center', overflow: 'hidden' }}>
           {noteText || "can't wait to see you 🌙"}
         </div>
       </div>
 
-      {/* plant (left, floor) */}
-      {placed('plant') && <PlantDecor x={10} bottom={186} />}
-      {placed('cactus') && <CactusDecor x={14} bottom={190} />}
+      {placed('plant')  && <PlantDecor  x={10}  bottom={186} />}
+      {placed('cactus') && <CactusDecor x={14}  bottom={190} />}
+      {placed('lamp')   && <LampDecor   right={14} bottom={182} glowing={mood === 'night'} />}
+      {placed('books')  && <BooksDecor  x={68}  bottom={192} />}
 
-      {/* lamp (right corner) */}
-      {placed('lamp') && <LampDecor right={14} bottom={182} glowing={mood === 'night'} />}
-
-      {/* books on floor-left */}
-      {placed('books') && <BooksDecor x={68} bottom={192} />}
-
-      {/* rug */}
       {placed('rug') && (
         <div style={{ position: 'absolute', bottom: 102, left: '50%', transform: 'translateX(-50%)', width: 220, height: 64, borderRadius: 32, background: 'oklch(69% 0.09 28)', boxShadow: '0 4px 14px rgba(0,0,0,0.14)' }}>
           <div style={{ position: 'absolute', inset: 8, borderRadius: 24, border: '2.5px solid oklch(78% 0.08 32)' }} />
@@ -300,19 +324,32 @@ export function RoomScene2D({ mood = 'golden', wallColor, floorColor, accentColo
         </div>
       )}
 
-      {/* candles */}
       {placed('candles') && <CandlesDecor left={16} bottom={192} />}
 
-      {/* cat on rug */}
-      {placed('cat') && <CatDecor left={36} bottom={112} />}
+      {placed('cat') && (
+        <CatDecor
+          left={36} bottom={112}
+          bodyColor={CAT_COLORS[catColorIdx ?? 0]}
+          wiggling={catWiggle}
+          onClick={tapCat}
+        />
+      )}
 
       {/* avatars */}
       <div style={{ position: 'absolute', bottom: 100, left: 0, right: 0, display: 'flex', justifyContent: 'center', alignItems: 'flex-end', gap: 8 }}>
-        <div style={{ cursor: 'pointer' }} onClick={() => onAvatarTap?.('a')}>
-          <BlobAvatar bodyColor={avatarA?.bodyColor} blushColor={avatarA?.blushColor} size={66} name={avatarA?.name} />
+        <div style={{ cursor: 'pointer' }} onClick={() => tapBlob('a')}>
+          <BlobAvatar
+            bodyColor={avatarA?.bodyColor} blushColor={avatarA?.blushColor}
+            size={66} name={avatarA?.name}
+            bouncing={bouncingA} floatAnim="blobFloat"
+          />
         </div>
-        <div style={{ cursor: 'pointer' }} onClick={() => onAvatarTap?.('b')}>
-          <BlobAvatar bodyColor={avatarB?.bodyColor} blushColor={avatarB?.blushColor} size={66} name={avatarB?.name} flip />
+        <div style={{ cursor: 'pointer' }} onClick={() => tapBlob('b')}>
+          <BlobAvatar
+            bodyColor={avatarB?.bodyColor} blushColor={avatarB?.blushColor}
+            size={66} name={avatarB?.name} flip
+            bouncing={bouncingB} floatAnim="blobFloatB"
+          />
         </div>
       </div>
 
@@ -332,9 +369,8 @@ export function RoomScene2D({ mood = 'golden', wallColor, floorColor, accentColo
         ))}
       </div>
 
-      {/* tap hint */}
       <div style={{ position: 'absolute', bottom: 80, left: 0, right: 0, textAlign: 'center', fontFamily: '"Nunito", sans-serif', fontSize: 10, color: 'rgba(80,60,40,0.35)', letterSpacing: 0.5, fontWeight: 600, pointerEvents: 'none' }}>
-        tap a blob to customize
+        tap blobs to customize · tap cat to recolor
       </div>
     </div>
   );

@@ -113,10 +113,12 @@ export default function App() {
               avatarB={room.avatarB}
               shopItems={room.shopItems}
               coins={room.coins}
+              catColorIdx={room.catColorIdx ?? 0}
               noteText={room.note}
               onMoodChange={mood => updateRoom({ mood })}
               onAvatarTap={() => setScreen('customize')}
               onNoteClick={() => setScreen('note')}
+              onCatColorChange={idx => updateRoom({ catColorIdx: idx })}
             />
           )}
 
