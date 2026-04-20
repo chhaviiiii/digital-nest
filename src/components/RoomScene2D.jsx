@@ -1,5 +1,5 @@
 import React from 'react';
-import { MOODS, CAT_COLORS, REACTION_EMOJIS, PING_MESSAGES } from '../constants.js';
+import { MOODS, CAT_COLORS, PING_MESSAGES } from '../constants.js';
 
 const DRAG_THRESHOLD = 6;
 
@@ -346,10 +346,10 @@ export function RoomScene2D({
   mood = 'golden', wallColor, floorColor, accentColor,
   avatarA, avatarB, shopItems = [], coins = 0, catColorIdx = 0, noteText,
   sleepA = false, sleepB = false, ping = null,
-  streak = 0, reactions = [], nextDate = null, roomName = '',
+  streak = 0, nextDate = null, roomName = '',
   onMoodChange, onAvatarTap, onNoteClick,
   onCatColorChange, onItemMove, onBlobMove, onToggleSleep,
-  onPing, onAddReaction, onRoomNameChange,
+  onPing, onRoomNameChange,
 }) {
   const wc = wallColor  || 'oklch(93% 0.022 55)';
   const fc = floorColor || 'oklch(65% 0.08 54)';
@@ -368,9 +368,6 @@ export function RoomScene2D({
   React.useEffect(() => { setNameDraft(roomName); }, [roomName]);
   const commitName = () => { setEditingName(false); if (nameDraft.trim()) onRoomNameChange?.(nameDraft.trim()); };
 
-  // reaction emoji picker
-  const [pickerPos, setPickerPos] = React.useState(null);
-
   // ping hearts auto-clear
   React.useEffect(() => {
     if (!ping?.ts) return;
@@ -379,17 +376,6 @@ export function RoomScene2D({
     const t = setTimeout(() => setShowPing(false), 4500);
     return () => clearTimeout(t);
   }, [ping?.ts]);
-
-  // force re-render as reactions expire
-  const [, forceUpdate] = React.useReducer(x => x + 1, 0);
-  const now = Date.now();
-  const visibleReactions = (reactions || []).filter(r => now - r.ts < 6000);
-  React.useEffect(() => {
-    if (!visibleReactions.length) return;
-    const min = Math.min(...visibleReactions.map(r => 6000 - (Date.now() - r.ts)));
-    const t = setTimeout(forceUpdate, Math.max(min, 50));
-    return () => clearTimeout(t);
-  }, [visibleReactions.length]); // eslint-disable-line
 
   const roomRef = React.useRef(null);
 
@@ -414,21 +400,8 @@ export function RoomScene2D({
     daysUntil = Math.ceil(diff / 86400000);
   }
 
-  const onFloorClick = (e) => {
-    // Only open picker on the floor area (bottom 46% of room)
-    const rect = roomRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const yPct = ((e.clientY - rect.top) / rect.height) * 100;
-    if (yPct < 52) return; // not on floor
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const cx = e.clientX - rect.left;
-    const cy = e.clientY - rect.top;
-    setPickerPos({ x, y: yPct, cx, cy });
-  };
-
   return (
-    <div ref={roomRef} style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}
-      onClick={onFloorClick}>
+    <div ref={roomRef} style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
 
       {/* back wall */}
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: '46%', background: wc }}>
@@ -501,35 +474,6 @@ export function RoomScene2D({
       {placed('rug')     && <DraggableDecor itemId="rug"     pos={itemPos('rug')}     onMove={onItemMove} roomRef={roomRef}><RugSVG /></DraggableDecor>}
       {placed('candles') && <DraggableDecor itemId="candles" pos={itemPos('candles')} onMove={onItemMove} roomRef={roomRef}><CandlesSVG /></DraggableDecor>}
       {placed('cat')     && <DraggableDecor itemId="cat" pos={itemPos('cat')} onMove={onItemMove} onTap={tapCat} roomRef={roomRef}><CatSVG bodyColor={CAT_COLORS[catColorIdx??0]} wiggling={catWiggling} /></DraggableDecor>}
-
-      {/* ── Floating reactions ── */}
-      {visibleReactions.map(r => {
-        const age = Date.now() - r.ts;
-        return (
-          <div key={r.id} style={{
-            position: 'absolute', left: `${r.x}%`, top: `${r.y}%`,
-            fontSize: 24, pointerEvents: 'none', zIndex: 30,
-            animation: 'reactionFloat 3s ease-out forwards',
-          }}>{r.emoji}</div>
-        );
-      })}
-
-      {/* ── Emoji picker ── */}
-      {pickerPos && (
-        <div onClick={e => e.stopPropagation()}
-          style={{ position: 'absolute', left: Math.min(pickerPos.cx, 320), top: Math.max(pickerPos.cy - 52, 60), transform: 'translateX(-50%)', display: 'flex', gap: 6, background: 'rgba(255,255,255,0.96)', borderRadius: 22, padding: '7px 12px', boxShadow: '0 4px 18px rgba(0,0,0,0.16)', zIndex: 50 }}>
-          {REACTION_EMOJIS.map(emoji => (
-            <span key={emoji} onClick={() => {
-              onAddReaction?.({ id: Math.random().toString(36).slice(2), emoji, x: pickerPos.x, y: pickerPos.y, ts: Date.now() });
-              setPickerPos(null);
-            }} style={{ fontSize: 22, cursor: 'pointer', transition: 'transform 0.1s' }}
-              onPointerEnter={e => e.currentTarget.style.transform = 'scale(1.25)'}
-              onPointerLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-            >{emoji}</span>
-          ))}
-          <span onClick={() => setPickerPos(null)} style={{ fontSize: 12, color: 'oklch(60% 0.04 50)', cursor: 'pointer', alignSelf: 'center', paddingLeft: 4 }}>✕</span>
-        </div>
-      )}
 
       {/* ── Blob A — draggable ── */}
       <DraggableDecor itemId="blobA" pos={avatarA?.pos ?? {x:18,y:66}} onMove={(_,pos) => onBlobMove?.('a',pos)} onTap={() => tapBlob('a')} roomRef={roomRef}>
@@ -611,7 +555,7 @@ export function RoomScene2D({
 
       {/* hint */}
       <div style={{ position: 'absolute', bottom: 74, left: 0, right: 0, textAlign: 'center', fontFamily: '"Nunito",sans-serif', fontSize: 9, color: 'rgba(80,60,40,0.3)', letterSpacing: 0.4, fontWeight: 600, pointerEvents: 'none' }}>
-        drag to move · tap floor for emoji · tap blob to customize
+        drag blobs &amp; items to move · tap blob to customize
       </div>
     </div>
   );

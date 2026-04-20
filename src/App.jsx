@@ -76,13 +76,6 @@ export default function App() {
   // ── ping ─────────────────────────────────────────────────────
   const sendPing = (msg) => updateRoom({ ping: { ts: Date.now(), msg: msg || '💕' } });
 
-  // ── reactions ────────────────────────────────────────────────
-  const addReaction = ({ id, emoji, x, y, ts }) => {
-    const now     = Date.now();
-    const pruned  = (room.reactions || []).filter(r => now - r.ts < 10000);
-    updateRoom({ reactions: [...pruned, { id, emoji, x, y, ts }] });
-  };
-
   // ── room meta ────────────────────────────────────────────────
   const setRoomName = (name) => updateRoom({ roomName: name });
 
@@ -130,7 +123,6 @@ export default function App() {
               sleepB={room.sleepB ?? false}
               ping={room.ping ?? null}
               streak={room.streak ?? 0}
-              reactions={room.reactions ?? []}
               nextDate={room.nextDate ?? null}
               roomName={room.roomName ?? ''}
               onMoodChange={mood => updateRoom({ mood })}
@@ -141,7 +133,6 @@ export default function App() {
               onBlobMove={moveBlob}
               onToggleSleep={toggleSleep}
               onPing={sendPing}
-              onAddReaction={addReaction}
               onRoomNameChange={setRoomName}
             />
           )}

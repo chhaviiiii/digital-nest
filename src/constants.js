@@ -53,8 +53,6 @@ export const ACCESSORIES = [
   { id: 'flower', label: 'Flower 🌸'  },
 ];
 
-export const REACTION_EMOJIS = ['❤️', '🌸', '✨', '🎉', '💫', '🐾'];
-
 export const PING_MESSAGES = [
   { msg: 'miss you 💕',         emoji: '💕' },
   { msg: 'thinking of you 🌸', emoji: '🌸' },
@@ -112,7 +110,6 @@ export const DEFAULT_ROOM = {
   ping:           null,
   streak:         0,
   lastActive:     null,
-  reactions:      [],
   completedTasks: [],
   nextDate:       null,
 };
